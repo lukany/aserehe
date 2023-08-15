@@ -25,7 +25,7 @@ class InvalidCommitType(InvalidCommitMessage):
     pass
 
 
-def _check_single(message):
+def _check_single(message: str) -> None:
     match = re.match(_REGEX, message)
     if match is None:
         raise InvalidCommitMessage(f"Invalid commit message format: {message}")
@@ -33,7 +33,7 @@ def _check_single(message):
         raise InvalidCommitType(f"Invalid commit type: {commit_type}")
 
 
-def _check_git():
+def _check_git() -> None:
     repo = Repo(".")
     for commit in repo.iter_commits():
         _check_single(commit.summary)

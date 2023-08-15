@@ -6,7 +6,7 @@ app = typer.Typer()
 
 
 @app.command()
-def check(from_stdin: bool = typer.Option(False, "--from-stdin")):
+def check(from_stdin: bool = typer.Option(False, "--from-stdin")) -> None:
     if from_stdin:
         stdin = typer.get_text_stream("stdin")
         _check_single(stdin.read())
