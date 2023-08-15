@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "aserehe"
+version = "0.1.0"
+description = "a semantic release helper CLI"
+authors = ["Jan Lukány <lukany.jan@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+GitPython = "^3.1.32"
+
+[tool.poetry.dev-dependencies]
+black = "^23.7.0"
+pytest = "^7.4.0"
+ruff = "^0.0.284"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
