@@ -3,37 +3,15 @@ import pytest
 from aserehe.check import _check_single, InvalidCommitMessage, InvalidCommitType
 
 
-@pytest.mark.parametrize(
-    "message",
-    (
-        "chore: upgrade dependencies",
-        "fix!: do not crash on empty input",
-        "feat: add API endpoint",
-        "test: add test",
-    ),
-)
-def test_check_single(message):
-    _check_single(message)
+def test_check_single(valid_message):
+    _check_single(valid_message)
 
 
-@pytest.mark.parametrize(
-    "message",
-    ("", "42", "chore upgrade dependencies", "feat(API) add endpoint", "docs: "),
-)
-def test_invalid_format(message):
+def test_invalid_format(invalid_format_message):
     with pytest.raises(InvalidCommitMessage):
-        _check_single(message)
+        _check_single(invalid_format_message)
 
 
-@pytest.mark.parametrize(
-    "message",
-    (
-        "42: the answer",
-        "tests: add test",
-        "doc: add documentation",
-        "feature: add API endpoint",
-    ),
-)
-def test_invalid_type(message):
+def test_invalid_type(invalid_type_message):
     with pytest.raises(InvalidCommitType):
-        _check_single(message)
+        _check_single(invalid_type_message)
