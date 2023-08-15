@@ -14,7 +14,6 @@ _TYPES = {
 }
 _REGEX = re.compile(
     r"^(?P<type>\w+)(\((?P<scope>.*)\))?(?P<breaking>!)?: (?P<description>.+)$"
-    # FIXME: $ cannot be in the end because some messages contain double line breaks. Noticed this on commits made by GitHub during squash commits from PR.
 )
 
 
@@ -28,9 +27,6 @@ class InvalidCommitType(InvalidCommitMessage):
 
 def _check_single(message):
     match = re.match(_REGEX, message)
-    print(f"Checking commit message: '{message}'")
-    for char in message:
-        print(f"  {ord(char)}, {char}")
     if match is None:
         raise InvalidCommitMessage(f"Invalid commit message format: {message}")
     if (commit_type := match.group("type")) not in _TYPES:

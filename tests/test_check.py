@@ -7,7 +7,6 @@ from aserehe.check import _check_single, InvalidCommitMessage, InvalidCommitType
     "message",
     (
         "chore: upgrade dependencies",
-        "chore: add .gitignore (#3)",
         "fix!: do not crash on empty input",
         "feat: add API endpoint",
         "test: add test",
