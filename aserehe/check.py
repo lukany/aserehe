@@ -1,6 +1,6 @@
 import re
 
-from git import Repo
+from git.repo import Repo
 
 _TYPES = {
     "chore",
