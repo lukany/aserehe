@@ -36,4 +36,7 @@ def _check_single(message: str) -> None:
 def _check_git() -> None:
     repo = Repo(".")
     for commit in repo.iter_commits():
-        _check_single(commit.summary)
+        summary = commit.summary
+        if isinstance(summary, bytes):
+            raise TypeError("Commit summary is bytes. Expected str.")
+        _check_single(summary)
