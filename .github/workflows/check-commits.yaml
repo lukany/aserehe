@@ -1,0 +1,14 @@
+name: Check Commits on main
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  check-main-commits:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./.github/actions/setup-python-env
+      - run: poetry run python -m aserehe
