@@ -1,0 +1,13 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+
+# Unit test / coverage reports
+.pytest-cache
+
+# poetry
+# aserehe is intended to be installed as a library, so we don't need to include
+# poetry.lock in the repository for reproducibility.
+poetry.lock
+
+# ruff
+.ruff_cache
