@@ -36,4 +36,4 @@ def _check_single(message):
 def check():
     repo = Repo(".")
     for commit in repo.iter_commits():
-        _check_single(commit.message)
+        _check_single(commit.summary)
