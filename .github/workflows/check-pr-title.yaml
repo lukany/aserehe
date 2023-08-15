@@ -1,0 +1,11 @@
+name: Check PR Title
+
+on: [pull_request]
+
+jobs:
+  check-pr-title:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./.github/actions/setup-python-env
+      - run: echo { github.event.pull_request.title } | poetry run python -m aserehe --from-stdin
