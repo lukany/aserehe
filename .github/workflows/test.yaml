@@ -24,12 +24,3 @@ jobs:
       - uses: ./.github/actions/setup-python-env
       - name: Test
         run: poetry run pytest
-  commits:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-      - uses: ./.github/actions/setup-python-env
-      - name: Commits
-        run: poetry run python -m aserehe
