@@ -11,3 +11,6 @@ poetry.lock
 
 # ruff
 .ruff_cache
+
+# mypy
+.mypy_cache
