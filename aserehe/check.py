@@ -33,7 +33,7 @@ def _check_single(message):
         raise InvalidCommitType(f"Invalid commit type: {commit_type}")
 
 
-def check():
+def _check_git():
     repo = Repo(".")
     for commit in repo.iter_commits():
         _check_single(commit.summary)
