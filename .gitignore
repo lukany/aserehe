@@ -1,0 +1,11 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+
+# Unit test / coverage reports
+.pytest-cache
+
+# poetry
+poetry.lock
+
+# ruff
+.ruff_cache
