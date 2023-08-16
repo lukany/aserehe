@@ -7,6 +7,12 @@ import pytest
         "fix!: do not crash on empty input",
         "feat: add API endpoint",
         "test: add test",
+        """chore!: drop support for Python 2
+
+There is no reason to support Python 2 anymore.
+
+BREAKING CHANGE: Python 2 is no longer supported
+        """,
     ),
 )
 def valid_message(request: pytest.FixtureRequest) -> str:

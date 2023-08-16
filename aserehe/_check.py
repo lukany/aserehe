@@ -26,9 +26,12 @@ class InvalidCommitType(InvalidCommitMessage):
 
 
 def _check_single(message: str) -> None:
-    match = re.match(_REGEX, message)
+    summary = message.split("\n", 1)[0]
+    match = re.match(_REGEX, summary)
     if match is None:
-        raise InvalidCommitMessage(f"Invalid commit message format: {message}")
+        raise InvalidCommitMessage(
+            f"Invalid commit summary format (first line of message): {summary}"
+        )
     if (commit_type := match.group("type")) not in _TYPES:
         raise InvalidCommitType(f"Invalid commit type: {commit_type}")
 
@@ -36,7 +39,8 @@ def _check_single(message: str) -> None:
 def _check_git() -> None:
     repo = Repo(".")
     for commit in repo.iter_commits():
-        summary = commit.summary
-        if isinstance(summary, bytes):
-            raise TypeError("Commit summary is bytes. Expected str.")
-        _check_single(summary)
+        message = commit.message
+        commit.summary
+        if isinstance(message, bytes):
+            raise TypeError("Commit message is bytes. Expected str.")
+        _check_single(message)
