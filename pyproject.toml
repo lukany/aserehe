@@ -5,6 +5,17 @@ description = "a semantic release helper CLI"
 authors = ["Jan Lukány <lukany.jan@gmail.com>"]
 license = "MIT"
 readme = "README.md"
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Framework :: Pytest",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Version Control :: Git",
+    "Topic :: Utilities",
+]
 
 [tool.poetry.dependencies]
 python = "^3.11"
