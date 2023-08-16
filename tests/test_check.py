@@ -1,6 +1,6 @@
 import pytest
 
-from aserehe.check import _check_single, InvalidCommitMessage, InvalidCommitType
+from aserehe._check import _check_single, InvalidCommitMessage, InvalidCommitType
 
 
 def test_check_single(valid_message):

@@ -1,6 +1,6 @@
 import typer
 
-from aserehe.check import _check_git, _check_single
+from aserehe._check import _check_git, _check_single
 
 app = typer.Typer()
 
