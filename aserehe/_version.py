@@ -29,7 +29,6 @@ def _current_version() -> Version:
         lambda tag: repo.is_ancestor(tag.commit, repo.head.commit), repo.tags
     )
 
-    # TODO: split into two functions
     versions: list[Version] = []
     for tag in parent_tags:
         try:
