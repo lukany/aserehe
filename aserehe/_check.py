@@ -45,7 +45,7 @@ def _check_summary(summary: str) -> ConventionalCommit:
         raise InvalidCommitMessage(
             f"Invalid commit summary format (first line of message): {summary}"
         )
-    if (commit_type := str(match.group("type"))) not in _TYPES:
+    if (commit_type := match.group("type")) not in _TYPES:
         raise InvalidCommitType(f"Invalid commit type: {commit_type}")
 
     return ConventionalCommit(type=commit_type, breaking=bool(match.group("breaking")))
