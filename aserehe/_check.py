@@ -1,6 +1,8 @@
-import re
-
+from git.objects import Commit
 from git.repo import Repo
+
+import re
+from dataclasses import dataclass
 
 _TYPES = {
     "chore",
@@ -15,6 +17,16 @@ _TYPES = {
 _REGEX = re.compile(
     r"^(?P<type>\w+)(\((?P<scope>.*)\))?(?P<breaking>!)?: (?P<description>.+)$"
 )
+_BREAKING_CHANGE_FOOTER_TOKEN_REGEX = r"BREAKING(?: |-)CHANGE"
+_FOOTER_TOKEN_REGEX = (
+    rf"\n"
+    rf"((?:{_BREAKING_CHANGE_FOOTER_TOKEN_REGEX})|[\w-]+)"  # token
+    rf"(?:(?:: )|(?: #))"  # separator
+)
+
+
+class InvalidSummary(Exception):
+    pass
 
 
 class InvalidCommitMessage(Exception):
@@ -25,25 +37,42 @@ class InvalidCommitType(InvalidCommitMessage):
     pass
 
 
-def _check_summary(summary: str) -> None:
+@dataclass
+class ConventionalCommit:
+    type: str
+    breaking: bool
+
+
+def _check_summary(summary: str) -> ConventionalCommit:
     match = re.match(_REGEX, summary)
     if match is None:
         raise InvalidCommitMessage(
             f"Invalid commit summary format (first line of message): {summary}"
         )
-    if (commit_type := match.group("type")) not in _TYPES:
+    if (commit_type := str(match.group("type"))) not in _TYPES:
         raise InvalidCommitType(f"Invalid commit type: {commit_type}")
 
+    return ConventionalCommit(type=commit_type, breaking=bool(match.group("breaking")))
 
-def _check_single(message: str) -> None:
+
+def _extract_breaking_change_footer_values(message: str) -> list[str]:
+    _, *footer_section = re.split(_FOOTER_TOKEN_REGEX, message)
+    breaking_changes = []
+    for token, value in zip(footer_section[::2], footer_section[1::2], strict=True):
+        if re.match(_BREAKING_CHANGE_FOOTER_TOKEN_REGEX, token):
+            breaking_changes.append(str(value))
+    return breaking_changes
+
+
+def _check_single(message: str) -> ConventionalCommit:
     if not message:
         raise InvalidCommitMessage("Empty commit message")
 
     lines = message.splitlines()
 
-    _check_summary(lines[0])
+    summary_conv_commit = _check_summary(lines[0])
     if len(lines) == 1:
-        return  # summary-only commit
+        return summary_conv_commit
 
     if lines[1].strip():
         # "The body MUST begin one blank line after the description."
@@ -54,14 +83,23 @@ def _check_single(message: str) -> None:
             " If you want to add a body, separate it from the summary with"
             " a blank line."
         )
-    # The rest of the message (third line and beyond) is body and/or footers.
-    # Those do not have to be checked as there is no incorrect format.
+
+    breaking_changes = _extract_breaking_change_footer_values(message)
+
+    return ConventionalCommit(
+        type=summary_conv_commit.type,
+        breaking=summary_conv_commit.breaking | bool(breaking_changes),
+    )
+
+
+def _check_git_commit(commit: Commit) -> ConventionalCommit:
+    message = commit.message
+    if isinstance(message, bytes):
+        raise TypeError("Commit message is bytes. Expected str.")
+    return _check_single(message)
 
 
 def _check_git() -> None:
     repo = Repo(".")
     for commit in repo.iter_commits():
-        message = commit.message
-        if isinstance(message, bytes):
-            raise TypeError("Commit message is bytes. Expected str.")
-        _check_single(message)
+        _check_git_commit(commit)
