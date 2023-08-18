@@ -1,8 +1,8 @@
-from git.objects import Commit
-from git.repo import Repo
-
 import re
 from dataclasses import dataclass
+
+from git.objects import Commit
+from git.repo import Repo
 
 _TYPES = {
     "chore",
