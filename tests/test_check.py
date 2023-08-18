@@ -46,8 +46,8 @@ Lorem ipsum dolor: this is not a footer but a paragraph in a breaking change foo
 This is still a part of the third breaking change.
 X: This is not a breaking change footer.
 """
-    footers = _extract_breaking_change_footer_values(message)
-    assert footers == [
+    breaking_changes = _extract_breaking_change_footer_values(message)
+    assert breaking_changes == [
         "this is a first breaking change",
         "A second breaking change ends with a newline.\n",
         """A third breaking change contains a multiline paragraph below.
