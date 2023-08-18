@@ -25,8 +25,8 @@ def _current_version() -> Version:
     """
     repo = Repo()
 
-    parent_tags = list(
-        filter(lambda tag: repo.is_ancestor(tag.commit, repo.head.commit), repo.tags)
+    parent_tags = filter(
+        lambda tag: repo.is_ancestor(tag.commit, repo.head.commit), repo.tags
     )
 
     # TODO: split into two functions
