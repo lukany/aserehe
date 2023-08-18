@@ -52,17 +52,16 @@ def _next_version() -> Version:
         # no commits yet
         return current_version
 
-    # Determine the commit to stop at (the commit at the last version tag)
     current_version_tag_reference = repo.tag(f"v{current_version}")
     if current_version_tag_reference in repo.tags:
-        stop_at_commit = current_version_tag_reference.commit
+        current_version_commit = current_version_tag_reference.commit
     else:
-        stop_at_commit = None
+        current_version_commit = None
 
     bump_patch = False
     bump_minor = False
     for commit in repo.iter_commits():
-        if stop_at_commit is not None and commit == stop_at_commit:
+        if current_version_commit is not None and commit == current_version_commit:
             break
         conv_commit = _check_git_commit(commit)
         if conv_commit.breaking:
