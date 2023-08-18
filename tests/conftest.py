@@ -13,6 +13,11 @@ There is no reason to support Python 2 anymore.
 
 BREAKING CHANGE: Python 2 is no longer supported
         """,
+        """fix: do not crash on empty input
+
+
+Message body
+""",
     ),
 )
 def valid_message(request: pytest.FixtureRequest) -> str:
@@ -26,6 +31,8 @@ def valid_message(request: pytest.FixtureRequest) -> str:
         "chore upgrade dependencies",
         "feat(API) add endpoint",
         "docs: ",
+        """fix: do not crash on empty input
+this line should be empty""",
     ),
 )
 def invalid_format_message(request: pytest.FixtureRequest) -> str:
