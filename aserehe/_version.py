@@ -19,6 +19,10 @@ def _parse_tag_name(tag_name: str) -> Version:
 
 
 def _current_version() -> Version:
+    """Return the highest semantic version tag that is an ancestor of HEAD.
+
+    Note that the highest semantic version tag may not be the latest tag.
+    """
     repo = Repo()
 
     parent_tags = list(
