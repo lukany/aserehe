@@ -40,8 +40,8 @@ def _current_version() -> Version:
 
 
 def _next_version() -> Version:
-    """Infer the next semantic version from conventional commit messages since the last
-    version tag (considering parent tags only).
+    """Infer the next semantic version from conventional commit messages since
+    the current version.
     """
     repo = Repo()
     current_version = _current_version()
