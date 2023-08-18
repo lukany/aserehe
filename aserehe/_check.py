@@ -25,10 +25,6 @@ _FOOTER_TOKEN_REGEX = (
 )
 
 
-class InvalidSummary(Exception):
-    pass
-
-
 class InvalidCommitMessage(Exception):
     pass
 
