@@ -1,5 +1,9 @@
 name: 'Setup Python Environment'
 description: 'Setup Python, install poetry, and install dependencies'
+inputs:
+  install-dependencies:
+    description: 'Whether to install dependencies'
+    required: false
 runs:
   using: "composite"
   steps:
@@ -10,5 +14,6 @@ runs:
       run: curl -sSL https://install.python-poetry.org | python3 - --version 1.5.1
       shell: bash
     - name: Install dependencies
+      if: ${{ inputs.install-dependencies }}
       run: poetry install
       shell: bash

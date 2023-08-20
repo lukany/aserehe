@@ -8,6 +8,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: ./.github/actions/setup-python-env
+        with:
+          install-dependencies: true
       - name: Format
         run: poetry run black .
   lint:
@@ -15,6 +17,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: ./.github/actions/setup-python-env
+        with:
+          install-dependencies: true
       - name: Lint
         run: poetry run ruff check .
   test:
@@ -22,6 +26,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: ./.github/actions/setup-python-env
+        with:
+          install-dependencies: true
       - name: Test
         run: poetry run pytest
   mypy:
@@ -29,5 +35,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: ./.github/actions/setup-python-env
+        with:
+          install-dependencies: true
       - name: Test
         run: poetry run mypy -p aserehe --strict
