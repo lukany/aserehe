@@ -1,26 +1,60 @@
+from dataclasses import dataclass
+
 import pytest
+
+from aserehe._check import ConventionalCommit
+
+
+@dataclass
+class ValidMessage:
+    message: str
+    expected_conv_commit: ConventionalCommit
 
 
 @pytest.fixture(
     params=(
-        "chore: upgrade dependencies",
-        "fix!: do not crash on empty input",
-        "feat: add API endpoint",
-        "test: add test",
-        """chore!: drop support for Python 2
+        ValidMessage(
+            message="chore: upgrade dependencies",
+            expected_conv_commit=ConventionalCommit(type="chore", breaking=False),
+        ),
+        ValidMessage(
+            message="fix!: do not crash on empty input",
+            expected_conv_commit=ConventionalCommit(type="fix", breaking=True),
+        ),
+        ValidMessage(
+            message="feat: add API endpoint",
+            expected_conv_commit=ConventionalCommit(type="feat", breaking=False),
+        ),
+        ValidMessage(
+            message="test: add test",
+            expected_conv_commit=ConventionalCommit(type="test", breaking=False),
+        ),
+        ValidMessage(
+            message="""chore!: drop support for Python 2
 
 There is no reason to support Python 2 anymore.
 
 BREAKING CHANGE: Python 2 is no longer supported
         """,
-        """fix: do not crash on empty input
+            expected_conv_commit=ConventionalCommit(type="chore", breaking=True),
+        ),
+        ValidMessage(
+            message="""fix: do not crash on empty input
 
 
 Message body
 """,
+            expected_conv_commit=ConventionalCommit(type="fix", breaking=False),
+        ),
+        ValidMessage(
+            message="""fix: delete invalid modules
+
+BREAKING-CHANGE: module X is not longer available""",
+            expected_conv_commit=ConventionalCommit(type="fix", breaking=True),
+        ),
     ),
 )
-def valid_message(request: pytest.FixtureRequest) -> str:
+def valid_message(request: pytest.FixtureRequest) -> ValidMessage:
     return request.param
 
 
