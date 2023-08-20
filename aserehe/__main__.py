@@ -1,4 +1,5 @@
 import typer
+from typing_extensions import Annotated
 
 from aserehe._check import _check_git, _check_single
 from aserehe._version import _current_version, _next_version
@@ -16,9 +17,18 @@ def check(from_stdin: bool = typer.Option(False, "--from-stdin")) -> None:
 
 
 @app.command()
-def version(bump: bool = typer.Option(False, "--bump")) -> None:
+def version(
+    next: Annotated[
+        bool,
+        typer.Option(
+            "--next",
+            is_flag=True,
+            help="Whether to print the next semantic version instead of the current",
+        ),
+    ] = False,
+) -> None:
     version_to_print = None
-    if bump:
+    if next:
         version_to_print = _next_version()
     else:
         version_to_print = _current_version()
