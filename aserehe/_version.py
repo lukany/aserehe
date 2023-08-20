@@ -1,7 +1,7 @@
 from git.repo import Repo
 from semantic_version import Version  # type: ignore[import]
 
-from aserehe._check import _check_git_commit
+from aserehe._check import check_git_commit
 
 _INITIAL_VERSION = Version("0.0.0")
 
@@ -18,7 +18,7 @@ def _parse_tag_name(tag_name: str) -> Version:
         ) from exc
 
 
-def _current_version() -> Version:
+def current_version() -> Version:
     """Return the highest semantic version tag that is an ancestor of HEAD.
 
     Note that the highest semantic version tag may not be the latest tag.
@@ -39,12 +39,12 @@ def _current_version() -> Version:
     return max(versions, default=_INITIAL_VERSION)
 
 
-def _next_version() -> Version:
+def next_version() -> Version:
     """Infer the next semantic version from conventional commit messages since
     the current version.
     """
     repo = Repo()
-    current_version = _current_version()
+    current_version = current_version()
 
     try:
         repo.head.commit
@@ -63,7 +63,7 @@ def _next_version() -> Version:
     for commit in repo.iter_commits():
         if current_version_commit is not None and commit == current_version_commit:
             break
-        conv_commit = _check_git_commit(commit)
+        conv_commit = check_git_commit(commit)
         if conv_commit.breaking:
             return current_version.next_major()
         if conv_commit.type == "fix":

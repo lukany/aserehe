@@ -90,14 +90,14 @@ def _extract_breaking_change_footer_values(message: str) -> list[str]:
     return breaking_changes
 
 
-def _check_git_commit(commit: Commit) -> ConventionalCommit:
+def check_git_commit(commit: Commit) -> ConventionalCommit:
     message = commit.message
     if isinstance(message, bytes):
         raise TypeError("Commit message is bytes. Expected str.")
     return ConventionalCommit.from_message(message)
 
 
-def _check_git() -> Iterator[ConventionalCommit]:
+def check_git() -> Iterator[ConventionalCommit]:
     repo = Repo(".")
     for commit in repo.iter_commits():
-        yield _check_git_commit(commit)
+        yield check_git_commit(commit)
