@@ -27,6 +27,18 @@ def version(
         ),
     ] = False,
 ) -> None:
+    """
+    Print the current or next version. A current version is printed unless --next option
+    is passed in which case the next semantic version is printed.
+
+    The current version is inferred from the latest git tag in the current and parent
+    commits.
+
+    The next semantic version is inferred from the conventional commits since the commit
+    tagged with the current version.
+    E.g. if the current version is 1.0.0 and there is a descendant conventional commit
+    with a breaking change, the next version will be 2.0.0.
+    """
     version_to_print = None
     if next:
         version_to_print = _next_version()
