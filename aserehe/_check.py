@@ -1,6 +1,6 @@
 import re
 from dataclasses import dataclass
-from typing import Self
+from typing import Iterator, Self
 
 from git.objects import Commit
 from git.repo import Repo
@@ -97,7 +97,7 @@ def _check_git_commit(commit: Commit) -> ConventionalCommit:
     return ConventionalCommit.from_message(message)
 
 
-def _check_git() -> None:
+def _check_git() -> Iterator[ConventionalCommit]:
     repo = Repo(".")
     for commit in repo.iter_commits():
-        _check_git_commit(commit)
+        yield _check_git_commit(commit)
