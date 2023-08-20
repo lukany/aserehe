@@ -1,8 +1,8 @@
 import typer
 from typing_extensions import Annotated
 
-from aserehe._check import _check_git, ConventionalCommit
-from aserehe._version import _current_version, _next_version
+from aserehe._check import check_git, ConventionalCommit
+from aserehe._version import current_version, next_version
 
 app = typer.Typer()
 
@@ -13,7 +13,7 @@ def check(from_stdin: bool = typer.Option(False, "--from-stdin")) -> None:
         stdin = typer.get_text_stream("stdin")
         ConventionalCommit.from_message(stdin.read())
     else:
-        _check_git()
+        check_git()
 
 
 @app.command()
@@ -41,9 +41,9 @@ def version(
     """
     version_to_print = None
     if next:
-        version_to_print = _next_version()
+        version_to_print = next_version()
     else:
-        version_to_print = _current_version()
+        version_to_print = current_version()
     typer.echo(version_to_print)
 
 
