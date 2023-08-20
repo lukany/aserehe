@@ -1,6 +1,6 @@
 import re
 from dataclasses import dataclass
-from typing import Self
+from typing import Iterator, Self
 
 from git.objects import Commit
 from git.repo import Repo
