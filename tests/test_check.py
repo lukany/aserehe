@@ -1,7 +1,7 @@
 import pytest
 
 from aserehe._check import (
-    _check_single,
+    ConventionalCommit,
     InvalidCommitMessage,
     InvalidCommitType,
     _extract_breaking_change_footer_values,
@@ -10,18 +10,18 @@ from tests.conftest import ValidMessage
 
 
 def test_check_single(valid_message: ValidMessage):
-    conv_commit = _check_single(valid_message.message)
+    conv_commit = ConventionalCommit.from_message(valid_message.message)
     assert conv_commit == valid_message.expected_conv_commit
 
 
 def test_invalid_format(invalid_format_message):
     with pytest.raises(InvalidCommitMessage):
-        _check_single(invalid_format_message)
+        ConventionalCommit.from_message(invalid_format_message)
 
 
 def test_invalid_type(invalid_type_message):
     with pytest.raises(InvalidCommitType):
-        _check_single(invalid_type_message)
+        ConventionalCommit.from_message(invalid_type_message)
 
 
 def test_breaking_changes():

@@ -1,7 +1,7 @@
 import typer
 from typing_extensions import Annotated
 
-from aserehe._check import _check_git, _check_single
+from aserehe._check import _check_git, ConventionalCommit
 from aserehe._version import _current_version, _next_version
 
 app = typer.Typer()
@@ -11,7 +11,7 @@ app = typer.Typer()
 def check(from_stdin: bool = typer.Option(False, "--from-stdin")) -> None:
     if from_stdin:
         stdin = typer.get_text_stream("stdin")
-        _check_single(stdin.read())
+        ConventionalCommit.from_message(stdin.read())
     else:
         _check_git()
 
