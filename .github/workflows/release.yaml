@@ -1,0 +1,43 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  check_version:
+    runs-on: ubuntu-22.04
+    outputs:
+      currentVersion: ${{ steps.check.outputs.currentVersion }}
+      nextVersion: ${{ steps.check.outputs.nextVersion }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./.github/actions/setup-python-env
+        with:
+          install-dependencies: true
+      - name: Set and check versions
+        id: check
+        run: |
+          CURRENT_VERSION=$(poetry run aserehe version)
+          NEXT_VERSION=$(poetry run aserehe version --next)
+          echo "currentVersion=$CURRENT_VERSION" >> "$GITHUB_OUTPUT"
+          echo "nextVersion=$NEXT_VERSION" >> "$GITHUB_OUTPUT"
+          echo "Current Version: $CURRENT_VERSION"
+          echo "Next Version: $NEXT_VERSION"
+  # TODO: add a step with creating a GitHub release
+  build-and-publish:
+    # Uses a trusted publisher: https://docs.pypi.org/trusted-publishers/using-a-publisher/
+    runs-on: ubuntu-latest
+    needs: check_version
+    if: ${{ needs.check_version.outputs.currentVersion != needs.check_version.outputs.nextVersion }}
+    environment: release
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/checkout@v2
+      - uses: /.github/actions/setup-python-env
+      - name: Build
+        run: poetry build
+      - name: Publish
+        uses: pypa/gh-action-pypi-publish@release/v1
