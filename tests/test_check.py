@@ -9,7 +9,7 @@ from aserehe._check import (
 from tests.conftest import ValidMessage
 
 
-def test_check_single(valid_message: ValidMessage):
+def test_from_message(valid_message: ValidMessage):
     conv_commit = ConventionalCommit.from_message(valid_message.message)
     assert conv_commit == valid_message.expected_conv_commit
 
