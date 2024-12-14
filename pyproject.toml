@@ -5,7 +5,7 @@ description = "a semantic release helper CLI"
 authors = [
     { name = "Jan Lukány", email = "lukany.jan@gmail.com" }
 ]
-license = "MIT"
+license = { file = "LICENSE" }
 readme = "README.md"
 requires-python = ">=3.11,<4.0.0"
 dependencies = [
