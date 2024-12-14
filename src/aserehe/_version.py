@@ -1,7 +1,7 @@
 from git.repo import Repo
-from semantic_version import Version  # type: ignore[import]
+from semantic_version import Version  # type: ignore[import-untyped]
 
-from aserehe._check import check_git_commit
+from aserehe._check import parse_git_commit
 
 _INITIAL_VERSION = Version("0.0.0")
 
@@ -63,7 +63,7 @@ def next_version() -> Version:
     for commit in repo.iter_commits():
         if current_version_commit is not None and commit == current_version_commit:
             break
-        conv_commit = check_git_commit(commit)
+        conv_commit = parse_git_commit(commit)
         if conv_commit.breaking:
             return current_version.next_major()
         if conv_commit.type == "fix":

@@ -6,12 +6,12 @@ from aserehe._check import (
     InvalidCommitType,
     _extract_breaking_change_footer_values,
 )
-from tests.conftest import ValidMessage
 
 
-def test_check_single(valid_message: ValidMessage):
-    conv_commit = ConventionalCommit.from_message(valid_message.message)
-    assert conv_commit == valid_message.expected_conv_commit
+def test_valid_message(valid_message):
+    print(valid_message)
+    conv_commit = ConventionalCommit.from_message(valid_message["message"])
+    assert conv_commit == valid_message["expected"]
 
 
 def test_invalid_format(invalid_format_message):
