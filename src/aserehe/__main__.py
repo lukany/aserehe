@@ -2,7 +2,7 @@ import typer
 from typing_extensions import Annotated
 
 from aserehe._check import parse_git_history, ConventionalCommit
-from aserehe._version import current_version, next_version
+from aserehe._version import get_current_version, get_next_version
 
 app = typer.Typer()
 
@@ -41,9 +41,9 @@ def version(
     """
     version_to_print = None
     if next:
-        version_to_print = next_version()
+        version_to_print = get_next_version()
     else:
-        version_to_print = current_version()
+        version_to_print = get_current_version()
     typer.echo(version_to_print)
 
 

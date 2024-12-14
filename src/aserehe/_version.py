@@ -18,7 +18,7 @@ def _parse_tag_name(tag_name: str) -> Version:
         ) from exc
 
 
-def current_version() -> Version:
+def get_current_version() -> Version:
     """Return the highest semantic version tag that is an ancestor of HEAD.
 
     Note that the highest semantic version tag may not be the latest tag.
@@ -39,12 +39,12 @@ def current_version() -> Version:
     return max(versions, default=_INITIAL_VERSION)
 
 
-def next_version() -> Version:
+def get_next_version() -> Version:
     """Infer the next semantic version from conventional commit messages since
     the current version.
     """
     repo = Repo()
-    current_version = current_version()
+    current_version = get_current_version()
 
     try:
         repo.head.commit
