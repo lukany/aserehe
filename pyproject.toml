@@ -2,7 +2,6 @@
 name = "aserehe"
 version = "0.1.0"
 description = "a semantic release helper CLI"
-repository = "https://github.com/lukany/aserehe"
 authors = [
     { name = "Jan Lukány", email = "lukany.jan@gmail.com" }
 ]
@@ -29,6 +28,9 @@ classifiers = [
 
 [project.scripts]
 aserehe = "aserehe.__main__:app"
+
+[project.urls]
+repository = "https://github.com/lukany/aserehe"
 
 [dependency-groups]
 dev = [
