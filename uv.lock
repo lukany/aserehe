@@ -1,5 +1,5 @@
 version = 1
-requires-python = ">=3.11, <3.14"
+requires-python = ">=3.11, <4.0.0"
 
 [[package]]
 name = "aserehe"
