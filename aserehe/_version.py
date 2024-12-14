@@ -1,5 +1,5 @@
 from git.repo import Repo
-from semantic_version import Version  # type: ignore[import]
+from semantic_version import Version  # type: ignore[import-untyped]
 
 from aserehe._check import parse_git_commit
 
