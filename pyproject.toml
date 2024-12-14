@@ -2,11 +2,13 @@
 name = "aserehe"
 version = "0.1.0"
 description = "a semantic release helper CLI"
-readme = "README.md"
+repository = "https://github.com/lukany/aserehe"
 authors = [
     { name = "Jan Lukány", email = "lukany.jan@gmail.com" }
 ]
-requires-python = ">=3.11"
+license = "MIT"
+readme = "README.md"
+requires-python = ">=3.11,<3.14"
 dependencies = [
     "GitPython>=3.1.32,<4.0.0",
     "semantic-version>=2.10.0,<3.0.0",
