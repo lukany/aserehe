@@ -23,10 +23,10 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "gitpython", specifier = "==3.1.43" },
-    { name = "semantic-version", specifier = "==2.10.0" },
-    { name = "typer", specifier = "==0.15.1" },
-    { name = "typing-extensions", specifier = "==4.12.2" },
+    { name = "gitpython", specifier = ">=3.1.43,<4.0.0" },
+    { name = "semantic-version", specifier = ">=2.10.0,<3.0.0" },
+    { name = "typer", specifier = ">=0.15.1,<1.0.0" },
+    { name = "typing-extensions", specifier = ">=4.12.2,<5.0.0" },
 ]
 
 [package.metadata.requires-dev]
