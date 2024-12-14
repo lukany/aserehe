@@ -1,0 +1,52 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release (e.g., 1.2.3)'
+        required: true
+        type: string
+
+env:
+  GITCLIFF_VERSION: 2.7.0
+  CHANGELOG_FILE: CHANGELOG.md
+  FULL_CHANGELOG_FILE: FULL_CHANGELOG.md
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-python-env
+      - name: Show updated pyproject.toml
+        run: cat pyproject.toml
+      - name: Set tag environment variable
+        run: |
+          echo "RELEASE_TAG=v${{ github.event.inputs.version }}" >> $GITHUB_ENV
+      - name: Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          ########################################
+          # Generate changelogs
+          ########################################
+          git_cliff_command="npx git-cliff@${{ env.GITCLIFF_VERSION }} --tag=${{ env.RELEASE_TAG }}"
+          $git_cliff_command --unreleased > ${{ env.CHANGELOG_FILE }}
+          $git_cliff_command > ${{ env.FULL_CHANGELOG_FILE }}
+          ########################################
+          # Create GitHub Release
+          ########################################
+          gh release create \
+            ${{ env.RELEASE_TAG }} \
+            --title ${{ env.RELEASE_TAG }} \
+            --notes-file ${{ env.CHANGELOG_FILE }} \
+            ${{ env.FULL_CHANGELOG_FILE }}
+          ########################################
+          # Build package
+          ########################################
+          sed -i "s/^version = .*/version = \"${{ github.event.inputs.version }}\"/" pyproject.toml
+          uv build
+      - name: Publish
+        uses: pypa/gh-action-pypi-publish@release/v1
