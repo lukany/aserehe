@@ -13,7 +13,7 @@ def check(from_stdin: bool = typer.Option(False, "--from-stdin")) -> None:
         stdin = typer.get_text_stream("stdin")
         ConventionalCommit.from_message(stdin.read())
     else:
-        parse_git_history()
+        list(parse_git_history())
 
 
 @app.command()
