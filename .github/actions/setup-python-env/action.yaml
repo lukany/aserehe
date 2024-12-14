@@ -1,14 +1,14 @@
 name: 'Setup Python Environment'
-description: 'Setup Python, install poetry, and install dependencies'
+description: 'Setup Python, install uv, and install dependencies'
 runs:
   using: "composite"
   steps:
     - uses: actions/setup-python@v2
       with:
         python-version: 3.11
-    - name: Install poetry
-      run: curl -sSL https://install.python-poetry.org | python3 - --version 1.5.1
+    - name: Install uv
+      run: curl -LsSf https://astral.sh/uv/0.5.9/install.sh | sh
       shell: bash
     - name: Install dependencies
-      run: poetry install
+      run: uv sync --frozen
       shell: bash

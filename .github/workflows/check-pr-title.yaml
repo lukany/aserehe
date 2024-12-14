@@ -8,4 +8,4 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: ./.github/actions/setup-python-env
-      - run: echo ${{ github.event.pull_request.title }} | poetry run aserehe check --from-stdin
+      - run: echo ${{ github.event.pull_request.title }} | uv run aserehe check --from-stdin
