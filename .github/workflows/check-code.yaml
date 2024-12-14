@@ -31,3 +31,10 @@ jobs:
       - uses: ./.github/actions/setup-python-env
       - name: Test
         run: uv run mypy -p aserehe --strict
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./.github/actions/setup-python-env
+      - name: Security
+        run: uv run bandit -r aserehe
