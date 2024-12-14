@@ -20,7 +20,7 @@ jobs:
       id-token: write
       contents: write
     environment:
-      name: release
+      name: production
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
