@@ -1,7 +1,8 @@
 import typer
+from git.repo import Repo
 from typing_extensions import Annotated
 
-from aserehe._check import ConventionalCommit, parse_git_history
+from aserehe._check import ConventionalCommit
 from aserehe._version import get_current_version, get_next_version
 
 app = typer.Typer()
@@ -13,7 +14,9 @@ def check(from_stdin: bool = typer.Option(False, "--from-stdin")) -> None:
         stdin = typer.get_text_stream("stdin")
         ConventionalCommit.from_message(stdin.read())
     else:
-        list(parse_git_history())
+        repo = Repo(".")
+        for commit in repo.iter_commits():
+            ConventionalCommit.from_git_commit(commit)
 
 
 @app.command()

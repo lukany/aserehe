@@ -1,9 +1,8 @@
 import re
 from dataclasses import dataclass
-from typing import Iterator, Self
+from typing import Self
 
 from git.objects import Commit
-from git.repo import Repo
 
 _BREAKING_CHANGE_FOOTER_TOKEN_REGEX = r"BREAKING(?: |-)CHANGE"
 _FOOTER_TOKEN_REGEX = (
@@ -96,9 +95,3 @@ def _breaking_change_footer_present(message: str) -> bool:
         if re.match(_BREAKING_CHANGE_FOOTER_TOKEN_REGEX, token):
             return True
     return False
-
-
-def parse_git_history() -> Iterator[ConventionalCommit]:
-    repo = Repo(".")
-    for commit in repo.iter_commits():
-        yield ConventionalCommit.from_git_commit(commit)
