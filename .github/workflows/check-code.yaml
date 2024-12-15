@@ -3,38 +3,38 @@ name: Check Code
 on: [push]
 
 jobs:
-  format:
+  check:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: ./.github/actions/setup-python-env
       - name: Format
+        continue-on-error: true
+        id: format
         run: uv run ruff format .
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: ./.github/actions/setup-python-env
       - name: Lint
+        continue-on-error: true
+        id: lint
         run: uv run ruff check .
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: ./.github/actions/setup-python-env
       - name: Test
+        continue-on-error: true
+        id: test
         run: uv run pytest
-  mypy:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: ./.github/actions/setup-python-env
-      - name: Test
+      - name: Type Check
+        continue-on-error: true
+        id: mypy
         run: uv run mypy -p aserehe --strict
-  security:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: ./.github/actions/setup-python-env
-      - name: Security
+      - name: Security Check
+        continue-on-error: true
+        id: security
         run: uv run bandit -r aserehe
+      - name: Check Results
+        run: |
+          if [[ "${{ steps.format.outcome }}" == "failure" ]] || \
+             [[ "${{ steps.lint.outcome }}" == "failure" ]] || \
+             [[ "${{ steps.test.outcome }}" == "failure" ]] || \
+             [[ "${{ steps.mypy.outcome }}" == "failure" ]] || \
+             [[ "${{ steps.security.outcome }}" == "failure" ]]; then
+            echo "One or more checks failed"
+            exit 1
+          fi
