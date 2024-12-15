@@ -1,6 +1,6 @@
 import pytest
 
-from aserehe._check import (
+from aserehe._commit import (
     ConventionalCommit,
     InvalidCommitMessageError,
     InvalidCommitTypeError,
