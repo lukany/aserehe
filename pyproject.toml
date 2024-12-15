@@ -42,7 +42,7 @@ dev = [
 ]
 
 [tool.ruff]
-select = ["I"]
+select = ["I", "N"]
 
 [build-system]
 requires = ["hatchling"]
