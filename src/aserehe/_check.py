@@ -13,11 +13,11 @@ _FOOTER_TOKEN_REGEX = (
 )
 
 
-class InvalidCommitMessage(Exception):
+class InvalidCommitMessageError(Exception):
     pass
 
 
-class InvalidCommitType(InvalidCommitMessage):
+class InvalidCommitTypeError(InvalidCommitMessageError):
     pass
 
 
@@ -44,18 +44,18 @@ class ConventionalCommit:
     def from_summary(cls, summary: str) -> Self:
         match = re.match(cls._SUMMARY_REGEX, summary)
         if match is None:
-            raise InvalidCommitMessage(
+            raise InvalidCommitMessageError(
                 f"Invalid commit summary format (first line of message): {summary}"
             )
         if (commit_type := match.group("type")) not in cls._TYPES:
-            raise InvalidCommitType(f"Invalid commit type: {commit_type}")
+            raise InvalidCommitTypeError(f"Invalid commit type: {commit_type}")
 
         return cls(type=commit_type, breaking=bool(match.group("breaking")))
 
     @classmethod
     def from_message(cls, message: str) -> Self:
         if not message:
-            raise InvalidCommitMessage("Empty commit message")
+            raise InvalidCommitMessageError("Empty commit message")
 
         lines = message.splitlines()
 
@@ -67,7 +67,7 @@ class ConventionalCommit:
             # "The body MUST begin one blank line after the description."
             # - https://www.conventionalcommits.org/en/v1.0.0/#specification
             # (point 6)
-            raise InvalidCommitMessage(
+            raise InvalidCommitMessageError(
                 "Second line of commit message must be empty."
                 " If you want to add a body, separate it from the summary with"
                 " a blank line."
