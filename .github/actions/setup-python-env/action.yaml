@@ -1,11 +1,16 @@
 name: 'Setup Python Environment'
 description: 'Setup Python, install uv, and install dependencies'
+inputs:
+  python-version:
+    description: 'Python version to use'
+    required: false
+    default: '3.11'
 runs:
   using: "composite"
   steps:
     - uses: actions/setup-python@v2
       with:
-        python-version: 3.11
+        python-version: ${{ inputs.python-version }}
     - name: Install uv
       run: curl -LsSf https://astral.sh/uv/0.5.9/install.sh | sh
       shell: bash
