@@ -41,6 +41,9 @@ dev = [
     "PyYAML>=6.0.2,<7.0.0",
 ]
 
+[tool.ruff]
+select = ["I"]
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
