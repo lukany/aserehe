@@ -75,21 +75,20 @@ class ConventionalCommit:
                 " a blank line."
             )
 
-        breaking_changes = _extract_breaking_change_footer_values(message)
+        breaking_changes = _breaking_change_footer_present(message)
 
         return cls(
             type=summary_conv_commit.type,
-            breaking=summary_conv_commit.breaking | bool(breaking_changes),
+            breaking=summary_conv_commit.breaking | breaking_changes,
         )
 
 
-def _extract_breaking_change_footer_values(message: str) -> list[str]:
+def _breaking_change_footer_present(message: str) -> bool:
     _, *footer_section = re.split(_FOOTER_TOKEN_REGEX, message)
-    breaking_changes = []
-    for token, value in zip(footer_section[::2], footer_section[1::2], strict=True):
+    for token, _ in zip(footer_section[::2], footer_section[1::2], strict=True):
         if re.match(_BREAKING_CHANGE_FOOTER_TOKEN_REGEX, token):
-            breaking_changes.append(str(value))
-    return breaking_changes
+            return True
+    return False
 
 
 def parse_git_commit(commit: Commit) -> ConventionalCommit:

@@ -4,7 +4,7 @@ from aserehe._check import (
     ConventionalCommit,
     InvalidCommitMessageError,
     InvalidCommitTypeError,
-    _extract_breaking_change_footer_values,
+    _breaking_change_footer_present,
 )
 
 
@@ -46,13 +46,4 @@ Lorem ipsum dolor: this is not a footer but a paragraph in a breaking change foo
 This is still a part of the third breaking change.
 X: This is not a breaking change footer.
 """
-    breaking_changes = _extract_breaking_change_footer_values(message)
-    assert breaking_changes == [
-        "this is a first breaking change",
-        "A second breaking change ends with a newline.\n",
-        """A third breaking change contains a multiline paragraph below.
-
-Lorem ipsum dolor: this is not a footer but a paragraph in a breaking change footer.
-
-This is still a part of the third breaking change.""",
-    ]
+    assert _breaking_change_footer_present(message)
