@@ -26,16 +26,18 @@ class ConventionalCommit:
     type: str
     breaking: bool
 
-    _TYPES = {
-        "chore",
-        "ci",
-        "docs",
-        "feat",
-        "fix",
-        "refactor",
-        "style",
-        "test",
-    }
+    _TYPES = frozenset(
+        {
+            "chore",
+            "ci",
+            "docs",
+            "feat",
+            "fix",
+            "refactor",
+            "style",
+            "test",
+        }
+    )
     _SUMMARY_REGEX = re.compile(
         r"^(?P<type>\w+)(\((?P<scope>.*)\))?(?P<breaking>!)?: (?P<description>.+)$"
     )
