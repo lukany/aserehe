@@ -3,7 +3,7 @@ from pathlib import Path
 import pytest
 import yaml
 
-from aserehe._check import ConventionalCommit
+from aserehe._commit import ConventionalCommit
 
 
 def load_yaml_data(filename: str) -> list:

@@ -1,7 +1,7 @@
 from git.repo import Repo
 from semantic_version import Version  # type: ignore[import-untyped]
 
-from aserehe._check import ConventionalCommit
+from aserehe._commit import ConventionalCommit
 
 _INITIAL_VERSION = Version("0.0.0")
 
