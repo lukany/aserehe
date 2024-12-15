@@ -41,7 +41,7 @@ dev = [
     "PyYAML>=6.0.2,<7.0.0",
 ]
 
-[tool.ruff]
+[tool.ruff.lint]
 select = ["I", "N"]
 
 [build-system]
