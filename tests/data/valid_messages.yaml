@@ -2,6 +2,14 @@
   type: "chore"
   breaking: false
 
+- message: "feat(api)!: breaking feature"
+  type: "feat"
+  breaking: true
+
+- message: "chore(api): upgrade dependencies"
+  type: "chore"
+  breaking: false
+
 - message: "fix!: do not crash on empty input"
   type: "fix"
   breaking: true
