@@ -2,7 +2,7 @@ import typer
 from git.repo import Repo
 from typing_extensions import Annotated
 
-from aserehe._check import ConventionalCommit
+from aserehe._commit import ConventionalCommit
 from aserehe._version import get_current_version, get_next_version
 
 app = typer.Typer()
