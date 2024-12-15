@@ -82,6 +82,13 @@ class ConventionalCommit:
             breaking=summary_conv_commit.breaking | breaking_changes,
         )
 
+    @classmethod
+    def from_git_commit(cls, commit: Commit) -> Self:
+        message = commit.message
+        if isinstance(message, bytes):
+            raise TypeError("Commit message is bytes. Expected str.")
+        return cls.from_message(message)
+
 
 def _breaking_change_footer_present(message: str) -> bool:
     _, *footer_section = re.split(_FOOTER_TOKEN_REGEX, message)
@@ -91,14 +98,7 @@ def _breaking_change_footer_present(message: str) -> bool:
     return False
 
 
-def parse_git_commit(commit: Commit) -> ConventionalCommit:
-    message = commit.message
-    if isinstance(message, bytes):
-        raise TypeError("Commit message is bytes. Expected str.")
-    return ConventionalCommit.from_message(message)
-
-
 def parse_git_history() -> Iterator[ConventionalCommit]:
     repo = Repo(".")
     for commit in repo.iter_commits():
-        yield parse_git_commit(commit)
+        yield ConventionalCommit.from_git_commit(commit)
