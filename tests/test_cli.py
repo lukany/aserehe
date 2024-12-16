@@ -12,6 +12,23 @@ def test_stdin(valid_message):
     )
     assert result.exit_code == 0
 
+def test_check_commits(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    repo = Repo.init()
+
+    # Valid commits should pass
+    repo.index.commit("feat: add feature")
+    repo.index.commit("fix: fix bug")
+    repo.index.commit("docs: update readme")
+
+    result = runner.invoke(app, ["check"])
+    assert result.exit_code == 0
+
+    # Invalid commit should fail
+    repo.index.commit("invalid commit message")
+    result = runner.invoke(app, ["check"])
+    assert result.exit_code == 1
+
 
 def test_version(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
