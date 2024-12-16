@@ -52,7 +52,3 @@ def version(
     else:
         version_to_print = get_current_version(repo)
     typer.echo(version_to_print)
-
-
-if __name__ == "__main__":
-    app()

@@ -27,7 +27,7 @@ classifiers = [
 ]
 
 [project.scripts]
-aserehe = "aserehe.__main__:app"
+aserehe = "aserehe._cli:app"
 
 [project.urls]
 repository = "https://github.com/lukany/aserehe"
