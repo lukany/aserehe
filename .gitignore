@@ -3,6 +3,7 @@ __pycache__/
 
 # Unit test / coverage reports
 .pytest-cache
+.coverage
 
 # poetry
 # aserehe is intended to be installed as a library, so we don't need to include
