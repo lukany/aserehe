@@ -87,8 +87,23 @@ class TestGetNextVersion:
             "feat: breaking change\n\nBREAKING-CHANGE: Change 2",
             "feat: breaking change\n\nBREAKING CHANGE #42",
             "feat: breaking change\n\nBREAKING CHANGE # this is a breaking change",
-            "feat: breaking change\n\nOther footer\nBREAKING CHANGE: Change 4\nAnother footer",
-            "feat: breaking change\n\nBREAKING CHANGE: Change 5\nBREAKING CHANGE: Change 6",
+            "\n".join(
+                [
+                    "feat: breaking change",
+                    "",
+                    "Other footer",
+                    "BREAKING CHANGE: Change 4",
+                    "Another footer",
+                ]
+            ),
+            "\n".join(
+                [
+                    "feat: breaking change",
+                    "",
+                    "BREAKING CHANGE: Change 5",
+                    "BREAKING CHANGE: Change 6",
+                ]
+            ),
         ],
     )
     def test_breaking_change_footer(
