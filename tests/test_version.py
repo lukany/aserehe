@@ -130,7 +130,7 @@ class TestGetNextVersion:
         temp_git_repo.index.commit("fix: fix bug")
         assert get_next_version() == Version("1.1.0")
 
-    def test_version_from_branch(self, temp_git_repo: Repo, monkeypatch: MonkeyPatch):
+    def test_version_from_parent_commits_only(self, temp_git_repo: Repo, monkeypatch: MonkeyPatch):
         monkeypatch.chdir(temp_git_repo.working_dir)
 
         temp_git_repo.index.commit("initial commit")
