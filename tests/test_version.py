@@ -42,13 +42,13 @@ class TestGetCurrentVersion:
     def test_no_tags(self, temp_git_repo: Repo, monkeypatch: MonkeyPatch):
         monkeypatch.chdir(temp_git_repo.working_dir)
         temp_git_repo.index.commit("initial commit")
-        assert get_current_version() == _INITIAL_VERSION
+        assert get_current_version(repo=temp_git_repo) == _INITIAL_VERSION
 
     def test_single_tag(self, temp_git_repo: Repo, monkeypatch: MonkeyPatch):
         monkeypatch.chdir(temp_git_repo.working_dir)
         temp_git_repo.index.commit("initial commit")
         temp_git_repo.create_tag("v1.0.0")
-        assert get_current_version() == Version("1.0.0")
+        assert get_current_version(repo=temp_git_repo) == Version("1.0.0")
 
     def test_multiple_tags(self, temp_git_repo: Repo, monkeypatch: MonkeyPatch):
         monkeypatch.chdir(temp_git_repo.working_dir)
@@ -58,27 +58,27 @@ class TestGetCurrentVersion:
         temp_git_repo.index.commit("second commit")
         temp_git_repo.create_tag("v2.0.0")
 
-        assert get_current_version() == Version("2.0.0")
+        assert get_current_version(repo=temp_git_repo) == Version("2.0.0")
 
 
 class TestGetNextVersion:
     def test_no_commits(self, temp_git_repo: Repo, monkeypatch: MonkeyPatch):
         monkeypatch.chdir(temp_git_repo.working_dir)
-        assert get_next_version() == _INITIAL_VERSION
+        assert get_next_version(repo=temp_git_repo) == _INITIAL_VERSION
 
     def test_feat_commit(self, temp_git_repo: Repo, monkeypatch: MonkeyPatch):
         monkeypatch.chdir(temp_git_repo.working_dir)
         temp_git_repo.index.commit("initial commit")
         temp_git_repo.create_tag("v1.0.0")
         temp_git_repo.index.commit("feat: add new feature")
-        assert get_next_version() == Version("1.1.0")
+        assert get_next_version(repo=temp_git_repo) == Version("1.1.0")
 
     def test_fix_commit(self, temp_git_repo: Repo, monkeypatch: MonkeyPatch):
         monkeypatch.chdir(temp_git_repo.working_dir)
         temp_git_repo.index.commit("initial commit")
         temp_git_repo.create_tag("v1.0.0")
         temp_git_repo.index.commit("fix: fix bug")
-        assert get_next_version() == Version("1.0.1")
+        assert get_next_version(repo=temp_git_repo) == Version("1.0.1")
 
     @pytest.mark.parametrize(
         "message",
@@ -113,14 +113,14 @@ class TestGetNextVersion:
         temp_git_repo.index.commit("initial commit")
         temp_git_repo.create_tag("v1.0.0")
         temp_git_repo.index.commit(message)
-        assert get_next_version() == Version("2.0.0")
+        assert get_next_version(repo=temp_git_repo) == Version("2.0.0")
 
     def test_breaking_change_bang(self, temp_git_repo: Repo, monkeypatch: MonkeyPatch):
         monkeypatch.chdir(temp_git_repo.working_dir)
         temp_git_repo.index.commit("initial commit")
         temp_git_repo.create_tag("v1.0.0")
         temp_git_repo.index.commit("feat!: another breaking change")
-        assert get_next_version() == Version("2.0.0")
+        assert get_next_version(repo=temp_git_repo) == Version("2.0.0")
 
     def test_multiple_changes(self, temp_git_repo: Repo, monkeypatch: MonkeyPatch):
         monkeypatch.chdir(temp_git_repo.working_dir)
@@ -128,7 +128,7 @@ class TestGetNextVersion:
         temp_git_repo.create_tag("v1.0.0")
         temp_git_repo.index.commit("feat: add new feature")
         temp_git_repo.index.commit("fix: fix bug")
-        assert get_next_version() == Version("1.1.0")
+        assert get_next_version(repo=temp_git_repo) == Version("1.1.0")
 
     def test_version_from_parent_commits_only(self, temp_git_repo: Repo, monkeypatch: MonkeyPatch):
         monkeypatch.chdir(temp_git_repo.working_dir)
@@ -143,4 +143,4 @@ class TestGetNextVersion:
         v1_fix_branch.checkout()
         temp_git_repo.index.commit("fix: fix bug")
 
-        assert get_next_version() == Version("1.0.1")
+        assert get_next_version(repo=temp_git_repo) == Version("1.0.1")
