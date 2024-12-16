@@ -25,7 +25,6 @@ def version(
         bool,
         typer.Option(
             "--next",
-            is_flag=True,
             help="Whether to print the next semantic version instead of the current",
         ),
     ] = False,
