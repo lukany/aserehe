@@ -1,7 +1,7 @@
 from git.repo import Repo
 from typer.testing import CliRunner
 
-from aserehe.__main__ import app
+from aserehe._cli import app
 
 runner = CliRunner()
 
