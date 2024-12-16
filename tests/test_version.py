@@ -1,5 +1,6 @@
 import pytest
 from git import Repo
+from pytest import MonkeyPatch
 from semantic_version import Version
 
 from aserehe._version import (
@@ -11,7 +12,7 @@ from aserehe._version import (
 
 
 @pytest.fixture
-def temp_git_repo(tmp_path):
+def temp_git_repo(tmp_path) -> Repo:
     """Create a temporary git repository for testing."""
     repo_path = tmp_path / "test_repo"
     repo_path.mkdir()
@@ -38,18 +39,18 @@ class TestParseTagName:
 
 
 class TestGetCurrentVersion:
-    def test_no_tags(self, temp_git_repo, monkeypatch):
+    def test_no_tags(self, temp_git_repo: Repo, monkeypatch: MonkeyPatch):
         monkeypatch.chdir(temp_git_repo.working_dir)
         temp_git_repo.index.commit("initial commit")
         assert get_current_version() == _INITIAL_VERSION
 
-    def test_single_tag(self, temp_git_repo, monkeypatch):
+    def test_single_tag(self, temp_git_repo: Repo, monkeypatch: MonkeyPatch):
         monkeypatch.chdir(temp_git_repo.working_dir)
         temp_git_repo.index.commit("initial commit")
         temp_git_repo.create_tag("v1.0.0")
         assert get_current_version() == Version("1.0.0")
 
-    def test_multiple_tags(self, temp_git_repo, monkeypatch):
+    def test_multiple_tags(self, temp_git_repo: Repo, monkeypatch: MonkeyPatch):
         monkeypatch.chdir(temp_git_repo.working_dir)
         temp_git_repo.index.commit("initial commit")
         temp_git_repo.create_tag("v1.0.0")
@@ -61,18 +62,18 @@ class TestGetCurrentVersion:
 
 
 class TestGetNextVersion:
-    def test_no_commits(self, temp_git_repo, monkeypatch):
+    def test_no_commits(self, temp_git_repo: Repo, monkeypatch: MonkeyPatch):
         monkeypatch.chdir(temp_git_repo.working_dir)
         assert get_next_version() == _INITIAL_VERSION
 
-    def test_feat_commit(self, temp_git_repo, monkeypatch):
+    def test_feat_commit(self, temp_git_repo: Repo, monkeypatch: MonkeyPatch):
         monkeypatch.chdir(temp_git_repo.working_dir)
         temp_git_repo.index.commit("initial commit")
         temp_git_repo.create_tag("v1.0.0")
         temp_git_repo.index.commit("feat: add new feature")
         assert get_next_version() == Version("1.1.0")
 
-    def test_fix_commit(self, temp_git_repo, monkeypatch):
+    def test_fix_commit(self, temp_git_repo: Repo, monkeypatch: MonkeyPatch):
         monkeypatch.chdir(temp_git_repo.working_dir)
         temp_git_repo.index.commit("initial commit")
         temp_git_repo.create_tag("v1.0.0")
@@ -84,26 +85,29 @@ class TestGetNextVersion:
         [
             "feat: breaking change\n\nBREAKING CHANGE: Change 1",
             "feat: breaking change\n\nBREAKING-CHANGE: Change 2",
-            "feat: breaking change\n\nBREAKING CHANGE Change 3",
+            "feat: breaking change\n\nBREAKING CHANGE #42",
+            "feat: breaking change\n\nBREAKING CHANGE # this is a breaking change",
             "feat: breaking change\n\nOther footer\nBREAKING CHANGE: Change 4\nAnother footer",
             "feat: breaking change\n\nBREAKING CHANGE: Change 5\nBREAKING CHANGE: Change 6",
         ],
     )
-    def test_breaking_change_footer(self, temp_git_repo, monkeypatch, message):
+    def test_breaking_change_footer(
+        self, temp_git_repo: Repo, monkeypatch: MonkeyPatch, message: str
+    ):
         monkeypatch.chdir(temp_git_repo.working_dir)
         temp_git_repo.index.commit("initial commit")
         temp_git_repo.create_tag("v1.0.0")
         temp_git_repo.index.commit(message)
         assert get_next_version() == Version("2.0.0")
 
-    def test_breaking_change_bang(self, temp_git_repo, monkeypatch):
+    def test_breaking_change_bang(self, temp_git_repo: Repo, monkeypatch: MonkeyPatch):
         monkeypatch.chdir(temp_git_repo.working_dir)
         temp_git_repo.index.commit("initial commit")
         temp_git_repo.create_tag("v1.0.0")
         temp_git_repo.index.commit("feat!: another breaking change")
         assert get_next_version() == Version("2.0.0")
 
-    def test_multiple_changes(self, temp_git_repo, monkeypatch):
+    def test_multiple_changes(self, temp_git_repo: Repo, monkeypatch: MonkeyPatch):
         monkeypatch.chdir(temp_git_repo.working_dir)
         temp_git_repo.index.commit("initial commit")
         temp_git_repo.create_tag("v1.0.0")
