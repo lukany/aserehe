@@ -129,3 +129,18 @@ class TestGetNextVersion:
         temp_git_repo.index.commit("feat: add new feature")
         temp_git_repo.index.commit("fix: fix bug")
         assert get_next_version() == Version("1.1.0")
+
+    def test_version_from_branch(self, temp_git_repo: Repo, monkeypatch: MonkeyPatch):
+        monkeypatch.chdir(temp_git_repo.working_dir)
+
+        temp_git_repo.index.commit("initial commit")
+        temp_git_repo.create_tag("v1.0.0")
+        temp_git_repo.index.commit("feat!: breaking change")
+        temp_git_repo.create_tag("v2.0.0")
+
+        # Create a fix branch from older commit
+        v1_fix_branch = temp_git_repo.create_head("v1-fix", commit="v1.0.0")
+        v1_fix_branch.checkout()
+        temp_git_repo.index.commit("fix: fix bug")
+
+        assert get_next_version() == Version("1.0.1")
