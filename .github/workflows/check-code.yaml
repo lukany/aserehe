@@ -16,7 +16,7 @@ jobs:
       - name: Format
         continue-on-error: true
         id: format
-        run: uv run ruff format .
+        run: uv run ruff format . --check
       - name: Lint
         continue-on-error: true
         id: lint

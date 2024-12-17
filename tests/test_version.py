@@ -130,7 +130,9 @@ class TestGetNextVersion:
         temp_git_repo.index.commit("fix: fix bug")
         assert get_next_version(repo=temp_git_repo) == Version("1.1.0")
 
-    def test_version_from_parent_commits_only(self, temp_git_repo: Repo, monkeypatch: MonkeyPatch):
+    def test_version_from_parent_commits_only(
+        self, temp_git_repo: Repo, monkeypatch: MonkeyPatch
+    ):
         monkeypatch.chdir(temp_git_repo.working_dir)
 
         temp_git_repo.index.commit("initial commit")
@@ -144,3 +146,16 @@ class TestGetNextVersion:
         temp_git_repo.index.commit("fix: fix bug")
 
         assert get_next_version(repo=temp_git_repo) == Version("1.0.1")
+
+    def test_development_versions(self, temp_git_repo: Repo, monkeypatch: MonkeyPatch):
+        monkeypatch.chdir(temp_git_repo.working_dir)
+        temp_git_repo.index.commit("initial commit")
+        temp_git_repo.create_tag("v0.1.0")
+        temp_git_repo.index.commit("feat!: breaking change")
+        assert get_next_version(repo=temp_git_repo) == Version("0.2.0")
+        temp_git_repo.create_tag("v0.2.0")
+        temp_git_repo.index.commit("feat: new feature")
+        assert get_next_version(repo=temp_git_repo) == Version("0.2.1")
+        temp_git_repo.create_tag("v0.2.1")
+        temp_git_repo.index.commit("fix: bug fix")
+        assert get_next_version(repo=temp_git_repo) == Version("0.2.2")
