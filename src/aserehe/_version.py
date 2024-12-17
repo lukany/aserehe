@@ -61,17 +61,15 @@ def get_next_version(repo: Repo) -> Version:
         # no commits yet
         return current_version
 
+    rev_range = "..HEAD"
+
     current_version_tag_reference = repo.tag(f"v{current_version}")
     if current_version_tag_reference in repo.tags:
-        current_version_commit = current_version_tag_reference.commit
-    else:
-        current_version_commit = None
+        rev_range = current_version_tag_reference.commit.hexsha + rev_range
 
     bump_patch = False
     bump_minor = False
-    for commit in repo.iter_commits():
-        if current_version_commit is not None and commit == current_version_commit:
-            break
+    for commit in repo.iter_commits(rev=rev_range):
         conv_commit = ConventionalCommit.from_git_commit(commit)
 
         # Special handling for 0.x.x versions
