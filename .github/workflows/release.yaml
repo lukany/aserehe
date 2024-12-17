@@ -16,6 +16,9 @@ env:
 jobs:
   release:
     runs-on: ubuntu-latest
+    concurrency:
+      group: release
+      cancel-in-progress: false
     permissions:
       id-token: write
       contents: write
