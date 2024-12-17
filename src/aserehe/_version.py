@@ -57,7 +57,7 @@ def get_next_version(repo: Repo) -> Version:
 
     bump_patch = False
     bump_minor = False
-    for commit in repo.iter_commits(rev_range):
+    for commit in repo.iter_commits(rev=rev_range):
         conv_commit = ConventionalCommit.from_git_commit(commit)
         if conv_commit.breaking:
             return current_version.next_major()
