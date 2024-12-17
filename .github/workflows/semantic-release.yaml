@@ -1,7 +1,9 @@
 name: Semantic Release
 
 on:
-  push:
+  workflow_run:
+    workflows: ["Check Code"]
+    types: [completed]
     branches:
       - main
 
