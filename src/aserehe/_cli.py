@@ -25,16 +25,16 @@ def check(from_stdin: bool = typer.Option(False, "--from-stdin")) -> None:
 
 @app.command()
 def version(
-    next: Annotated[
+    bump: Annotated[
         bool,
         typer.Option(
-            "--next",
+            "--bump",
             help="Whether to print the next semantic version instead of the current",
         ),
     ] = False,
 ) -> None:
     """
-    Print the current or next version. A current version is printed unless --next option
+    Print the current or next version. A current version is printed unless --bump option
     is passed in which case the next semantic version is printed.
 
     The current version is inferred from the latest git tag in the current and parent
@@ -47,7 +47,7 @@ def version(
     """
     repo = Repo(_CURRENT_DIR)
     version_to_print = None
-    if next:
+    if bump:
         version_to_print = get_next_version(repo)
     else:
         version_to_print = get_current_version(repo)

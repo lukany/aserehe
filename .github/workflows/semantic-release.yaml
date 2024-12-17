@@ -23,7 +23,7 @@ jobs:
         id: versions
         run: |
           current_version=$(uv run aserehe version)
-          next_version=$(uv run aserehe version --next)
+          next_version=$(uv run aserehe version --bump)
           echo "current=$current_version" >> $GITHUB_OUTPUT
           echo "next=$next_version" >> $GITHUB_OUTPUT
       - name: Trigger release workflow

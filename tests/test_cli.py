@@ -41,7 +41,7 @@ def test_version(tmp_path, monkeypatch):
         return _invoke_return_output(["version"])
 
     def next_version_cmd():
-        return _invoke_return_output(["version", "--next"])
+        return _invoke_return_output(["version", "--bump"])
 
     assert current_version_cmd() == next_version_cmd() == "0.0.0"
     repo.index.commit("feat: add feature")
