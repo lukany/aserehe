@@ -2,6 +2,7 @@ from pathlib import Path
 
 import typer
 from git.repo import Repo
+from gitdb.exc import BadName, BadObject
 from typing_extensions import Annotated
 
 from aserehe._commit import ConventionalCommit
@@ -12,14 +13,40 @@ app = typer.Typer()
 _CURRENT_DIR = Path(".")
 
 
+def _validate_rev_range(repo: Repo, rev_range: str) -> None:
+    if rev_range is not None:
+        revs = rev_range.split("..")
+        if len(revs) != 2 or not revs[0] or not revs[1]:
+            typer.echo(
+                f"Invalid revision range: {rev_range}. Expected format: START..END",
+                err=True,
+            )
+            raise typer.Exit(code=1)
+    for rev in revs:
+        try:
+            repo.rev_parse(rev)
+        except (BadName, BadObject) as e:
+            typer.echo(f"Invalid revision: '{rev}'", err=True)
+            raise typer.Exit(code=1) from e
+
 @app.command()
-def check(from_stdin: bool = typer.Option(False, "--from-stdin")) -> None:
+def check(
+    from_stdin: bool = typer.Option(False, "--from-stdin"),
+    rev_range: str = typer.Option(
+        None,
+        "--rev-range",
+        help=(
+            "Git revision range to check in the format START..END."
+            " Both START and END must exist (e.g. HEAD~5..HEAD)"
+        ),
+    ),
+) -> None:
     if from_stdin:
         stdin = typer.get_text_stream("stdin")
         ConventionalCommit.from_message(stdin.read())
     else:
         repo = Repo(_CURRENT_DIR)
-        for commit in repo.iter_commits():
+        for commit in repo.iter_commits(rev_range):
             ConventionalCommit.from_git_commit(commit)
 
 

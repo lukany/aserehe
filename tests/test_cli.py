@@ -30,6 +30,9 @@ def test_check_commits(tmp_path, monkeypatch):
     result = runner.invoke(app, ["check"])
     assert result.exit_code == 1
 
+    result = runner.invoke(app, ["check", "--rev-range", "HEAD~5..HEAD~"])
+    assert result.exit_code == 0
+
 
 def test_version(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
