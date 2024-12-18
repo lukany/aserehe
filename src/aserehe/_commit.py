@@ -4,7 +4,7 @@ from typing import Self
 
 from git.objects import Commit
 
-_BREAKING_CHANGE_FOOTER_TOKEN_REGEX = r"BREAKING(?: |-)CHANGE"
+_BREAKING_CHANGE_FOOTER_TOKEN_REGEX = r"BREAKING(?: |-)CHANGE"  # nosec
 _FOOTER_TOKEN_REGEX = (
     rf"\n"
     rf"((?:{_BREAKING_CHANGE_FOOTER_TOKEN_REGEX})|[\w-]+)"  # token
