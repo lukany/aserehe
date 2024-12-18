@@ -17,3 +17,6 @@ runs:
     - name: Install dependencies
       run: uv sync --locked
       shell: bash
+    - name: Audit dependencies
+      run: uv run pip-audit
+      shell: bash
