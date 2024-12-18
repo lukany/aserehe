@@ -32,7 +32,7 @@ jobs:
       - name: Security Check
         continue-on-error: true
         id: security
-        run: uv run bandit -r aserehe
+        run: uv run bandit -r src
       - name: Check Results
         run: |
           if [[ "${{ steps.format.outcome }}" == "failure" ]] || \
