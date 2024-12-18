@@ -32,7 +32,9 @@ jobs:
       - name: Security Check
         continue-on-error: true
         id: security
-        run: uv run bandit -r src
+        run: |
+          uv run bandit -r src
+          uv run bandit -r tests --skip B101
       - name: Check Results
         run: |
           if [[ "${{ steps.format.outcome }}" == "failure" ]] || \
