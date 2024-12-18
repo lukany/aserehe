@@ -1,6 +1,9 @@
 name: Check Code
 
-on: [push]
+on:
+  push:
+  merge_group:
+    types: [checks_requested]
 
 jobs:
   check:
