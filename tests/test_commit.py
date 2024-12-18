@@ -1,4 +1,5 @@
 import pytest
+from git import Commit
 
 from aserehe._commit import (
     ConventionalCommit,
@@ -47,3 +48,10 @@ This is still a part of the third breaking change.
 X: This is not a breaking change footer.
 """
     assert _breaking_change_footer_present(message)
+
+
+def test_git_commit_message_bytes():
+    commit = Commit(None, b"0" * 20)
+    commit.message = b"feat: add foo"
+    with pytest.raises(TypeError, match="Commit message is bytes. Expected str."):
+        ConventionalCommit.from_git_commit(commit)
