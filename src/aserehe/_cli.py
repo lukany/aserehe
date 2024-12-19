@@ -30,6 +30,7 @@ def _validate_rev_range(repo: Repo, rev_range: str | None) -> None:
             typer.echo(f"Invalid revision: '{rev}'", err=True)
             raise typer.Exit(code=1) from e
 
+
 @app.command()
 def check(
     from_stdin: bool = typer.Option(False, "--from-stdin"),
