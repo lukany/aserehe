@@ -2,7 +2,7 @@ from pathlib import Path
 
 import typer
 from git.repo import Repo
-from gitdb.exc import BadName, BadObject
+from gitdb.exc import BadName, BadObject  # type: ignore[import-untyped]
 from typing_extensions import Annotated
 
 from aserehe._commit import ConventionalCommit
