@@ -13,15 +13,16 @@ app = typer.Typer()
 _CURRENT_DIR = Path(".")
 
 
-def _validate_rev_range(repo: Repo, rev_range: str) -> None:
-    if rev_range is not None:
-        revs = rev_range.split("..")
-        if len(revs) != 2 or not revs[0] or not revs[1]:
-            typer.echo(
-                f"Invalid revision range: {rev_range}. Expected format: START..END",
-                err=True,
-            )
-            raise typer.Exit(code=1)
+def _validate_rev_range(repo: Repo, rev_range: str | None) -> None:
+    if rev_range is None:
+        return
+    revs = rev_range.split("..")
+    if len(revs) != 2 or not revs[0] or not revs[1]:
+        typer.echo(
+            f"Invalid revision range: {rev_range}. Expected format: START..END",
+            err=True,
+        )
+        raise typer.Exit(code=1)
     for rev in revs:
         try:
             repo.rev_parse(rev)
@@ -32,7 +33,7 @@ def _validate_rev_range(repo: Repo, rev_range: str) -> None:
 @app.command()
 def check(
     from_stdin: bool = typer.Option(False, "--from-stdin"),
-    rev_range: str = typer.Option(
+    rev_range: str | None = typer.Option(
         None,
         "--rev-range",
         help=(
@@ -42,10 +43,18 @@ def check(
     ),
 ) -> None:
     if from_stdin:
+        if rev_range is not None:
+            typer.echo(
+                "Cannot use --rev-range with --from-stdin. "
+                "Please provide a single commit message.",
+                err=True,
+            )
+            raise typer.Exit(code=1)
         stdin = typer.get_text_stream("stdin")
         ConventionalCommit.from_message(stdin.read())
     else:
         repo = Repo(_CURRENT_DIR)
+        _validate_rev_range(repo=repo, rev_range=rev_range)
         for commit in repo.iter_commits(rev_range):
             ConventionalCommit.from_git_commit(commit)
 
