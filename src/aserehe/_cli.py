@@ -17,17 +17,19 @@ def _validate_rev_range(repo: Repo, rev_range: str | None) -> None:
     if rev_range is None:
         return
     revs = rev_range.split("..")
-    if len(revs) != 2 or not revs[0] or not revs[1]:
+    try:
+        _start, _end = revs
+    except ValueError as e:
         typer.echo(
             f"Invalid revision range: {rev_range}. Expected format: START..END",
             err=True,
         )
-        raise typer.Exit(code=1)
-    for rev in revs:
+        raise typer.Exit(code=1) from e
+    for name, rev in [("START", _start), ("END", _end)]:
         try:
             repo.rev_parse(rev)
         except (BadName, BadObject) as e:
-            typer.echo(f"Invalid revision: '{rev}'", err=True)
+            typer.echo(f"Invalid {name} revision in rev range: '{rev}'", err=True)
             raise typer.Exit(code=1) from e
 
 
