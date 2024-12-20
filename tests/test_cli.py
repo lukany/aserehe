@@ -13,6 +13,25 @@ def test_stdin(valid_message):
     assert result.exit_code == 0
 
 
+def test_invalid_args(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    repo = Repo.init()
+    repo.index.commit("feat: add feature")
+
+    # Sanity check
+    result = runner.invoke(app, ["check"])
+    assert result.exit_code == 0
+
+    # Using --from-stdin with --rev-range should fail
+    result = runner.invoke(
+        app,
+        ["check", "--from-stdin", "--rev-range", "HEAD~..HEAD"],
+        input="fix: the bug",
+    )
+    assert result.exit_code == 1
+    assert "Cannot use --rev-range with --from-stdin" in result.output
+
+
 def test_check_commits(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     repo = Repo.init()
@@ -22,6 +41,10 @@ def test_check_commits(tmp_path, monkeypatch):
     repo.index.commit("fix: fix bug")
     repo.index.commit("docs: update readme")
 
+    # Invalid rev range should fail
+    result = runner.invoke(app, ["check", "--rev-range", "HEAD~100..HEAD"])
+    assert result.exit_code == 1
+
     result = runner.invoke(app, ["check"])
     assert result.exit_code == 0
 
@@ -29,6 +52,11 @@ def test_check_commits(tmp_path, monkeypatch):
     repo.index.commit("invalid commit message")
     result = runner.invoke(app, ["check"])
     assert result.exit_code == 1
+
+    result = runner.invoke(app, ["check", "--rev-range", "HEAD~3..HEAD~"])
+    assert (
+        result.exit_code == 0
+    ), f"Expected exit code 0 but got {result.exit_code}. Output: {result.output}"
 
 
 def test_version(tmp_path, monkeypatch):
