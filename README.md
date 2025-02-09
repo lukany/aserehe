@@ -1,5 +1,8 @@
 # Aserehe
 
+Aserehe is a Python CLI tool for managing semantic versioning and conventional commits with a focus on simplicity.
+It provides a minimalistic codebase and straightforward installation, making it an ideal choice for developers who prefer clean, efficient solutions without unnecessary complexity.
+
 [![image](https://img.shields.io/pypi/v/aserehe.svg)](https://pypi.python.org/pypi/aserehe)
 [![image](https://img.shields.io/pypi/l/aserehe.svg)](https://pypi.python.org/pypi/aserehe)
 [![image](https://img.shields.io/pypi/pyversions/aserehe.svg)](https://pypi.python.org/pypi/aserehe)
@@ -7,7 +10,7 @@
 [![ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v0.json)](https://github.com/astral-sh/ruff)
 
 ## Table of Contents
-- [Introduction](#introduction)
+
 - [Quickstart](#quickstart)
   - [Installation](#installation)
   - [Usage](#usage)
@@ -18,11 +21,6 @@
 - [License](#license)
 - [Contact](#contact)
 
-## Introduction
-
-Aserehe is a Python tool for managing semantic versioning and conventional commits with a focus on simplicity.
-It provides a minimalistic codebase and straightforward installation, making it an ideal choice for developers who prefer clean, efficient solutions without unnecessary complexity.
-
 ## Quickstart
 
 ### Installation
@@ -31,13 +29,12 @@ It provides a minimalistic codebase and straightforward installation, making it 
 The recommended way to install and run `aserehe` is using `uvx` (see [uv](https://github.com/astral-sh/uv)) or `pipx` (see [pipx](https://github.com/pypa/pipx)).
 
 ```console
-$ uvx aserehe --help
+uvx aserehe --help
 ```
 
 ```console
-$ pipx run aserehe --help
+pipx run aserehe --help
 ```
-
 
 ### Usage
 
@@ -46,19 +43,19 @@ $ pipx run aserehe --help
 Check if commit messages in a Git repository follow the [Conventional Commits](https://www.conventionalcommits.org/) specification:
 
 ```console
-$ aserehe check
+aserehe check
 ```
 
 Optionally, you can specify a Git revision range to check:
 
 ```console
-$ aserehe check --rev-range HEAD~5..HEAD
+aserehe check --rev-range HEAD~5..HEAD
 ```
 
 You can also check a single commit message from standard input:
 
 ```console
-$ echo "feat: add new feature" | aserehe check --from-stdin
+echo "feat: add new feature" | aserehe check --from-stdin
 ```
 
 ### Semantic Versioning
@@ -67,13 +64,9 @@ $ echo "feat: add new feature" | aserehe check --from-stdin
 The versions are expected to be defined as Git tags.
 
 ```console
-# Get current version
 $ aserehe version
 1.0.0
-
 $ git commit -m "feat: add new feature"
-
-# Get next version
 $ aserehe version --next
 1.1.0
 ```
@@ -89,6 +82,7 @@ The next version is inferred based on conventional commit messages since the cur
 The rules for version bumping are as follows:
 
 - **For versions 0.x.x (initial development)**:
+
   - Breaking changes bump the minor version.
   - Features and fixes bump the patch version.
 
@@ -101,14 +95,14 @@ If there are no commits since the current version or no version-impacting change
 
 ## Comparison with Similar Tools
 
-| Tool | Commit Validation | Version Inference | Changelog Generation | Release Automation | Hooks/Plugins | Customization | Complexity | Implementation |
-|-|-|-|-|-|-|-|-|-|
-| [**Cocogitto**](https://github.com/cocogitto/cocogitto) | ✓ | ✓ | ✓ | ✓ | ✓ | High - Custom commit types, scopes, hooks | Medium | Rust |
-| [**Convco**](https://github.com/convco/convco) | ✓ | ✓ | ✓ | - | - | Medium - Basic commit validation rules | Low | Rust |
-| [**Semantic Release**](https://github.com/semantic-release/semantic-release) | ✓ | ✓ | ✓ | ✓ | ✓ | High - Extensive plugin system | High | JavaScript/Node.js |
-| [**Python Semantic Release**](https://github.com/python-semantic-release/python-semantic-release) | ✓ | ✓ | ✓ | ✓ | ✓ | High - Complex configuration | High | Python |
-| [**Git Cliff**](https://github.com/orhun/git-cliff) | - | - | ✓ | - | - | High - Custom templates | Medium | Rust |
-| [**Aserehe**](https://github.com/lukany/aserehe) | ✓ | ✓ | - | - | - | None - Fixed rules | Very Low | Python |
+| Tool                                                                                              | Commit Validation | Version Inference | Changelog Generation | Release Automation | Hooks/Plugins | Customization                             | Complexity | Implementation     |
+| ------------------------------------------------------------------------------------------------- | ----------------- | ----------------- | -------------------- | ------------------ | ------------- | ----------------------------------------- | ---------- | ------------------ |
+| [**Cocogitto**](https://github.com/cocogitto/cocogitto)                                           | ✓                 | ✓                 | ✓                    | ✓                  | ✓             | High - Custom commit types, scopes, hooks | Medium     | Rust               |
+| [**Convco**](https://github.com/convco/convco)                                                    | ✓                 | ✓                 | ✓                    | -                  | -             | Medium - Basic commit validation rules    | Low        | Rust               |
+| [**Semantic Release**](https://github.com/semantic-release/semantic-release)                      | ✓                 | ✓                 | ✓                    | ✓                  | ✓             | High - Extensive plugin system            | High       | JavaScript/Node.js |
+| [**Python Semantic Release**](https://github.com/python-semantic-release/python-semantic-release) | ✓                 | ✓                 | ✓                    | ✓                  | ✓             | High - Complex configuration              | High       | Python             |
+| [**Git Cliff**](https://github.com/orhun/git-cliff)                                               | -                 | -                 | ✓                    | -                  | -             | High - Custom templates                   | Medium     | Rust               |
+| [**Aserehe**](https://github.com/lukany/aserehe)                                                  | ✓                 | ✓                 | -                    | -                  | -             | None - Fixed rules                        | Very Low   | Python             |
 
 Among these tools, Convco is the closest to Aserehe in its philosophy of simplicity, though it offers additional features like changelog generation. For most projects, other tools are likely better default choices due to their maturity and comprehensive feature sets. If you need a full-featured release automation system, Semantic Release or Python Semantic Release provide battle-tested solutions. For changelog generation specifically, Git Cliff stands out as an excellent dedicated tool with powerful templating capabilities. However, these tools can introduce significant complexity - whether through extensive configuration options, steep learning curves, or heavy dependencies.
 
@@ -145,16 +139,16 @@ on:
 jobs:
   semantic-release:
     runs-on: ubuntu-latest
-    concurrency:  # avoid concurrent releases
+    concurrency: # avoid concurrent releases
       group: semantic-release
       cancel-in-progress: false
     permissions:
-      actions: write  # needed for triggering release workflow
+      actions: write # needed for triggering release workflow
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # needed for next version inference
+          fetch-depth: 0 # needed for next version inference
       - name: Get current and next versions
         id: versions
         run: |
@@ -168,7 +162,6 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh workflow run release.yaml -f version=${{ steps.versions.outputs.next }}
-
 ```
 
 ```yaml
@@ -181,7 +174,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version to release (e.g., 1.2.3)'
+        description: "Version to release (e.g., 1.2.3)"
         required: true
         type: string
 
@@ -197,8 +190,8 @@ jobs:
       group: release
       cancel-in-progress: false
     permissions:
-      id-token: write  # needed for PyPI publishing
-      contents: write  # needed for creating releases
+      id-token: write # needed for PyPI publishing
+      contents: write # needed for creating releases
     environment:
       name: production
     steps:
@@ -211,7 +204,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # needed for changelog generation
+          fetch-depth: 0 # needed for changelog generation
       - uses: ./.github/actions/setup-python-env
       - name: Set tag environment variable
         run: |
@@ -241,8 +234,6 @@ jobs:
           uv build
       - name: Publish
         uses: pypa/gh-action-pypi-publish@release/v1
-
-
 ```
 
 ## Contributing
