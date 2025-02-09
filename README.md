@@ -1,7 +1,10 @@
 # Aserehe
 
-Aserehe is a Python CLI tool for managing semantic versioning and conventional commits with a focus on simplicity.
-It provides a minimalistic codebase and straightforward installation, making it an ideal choice for developers who prefer clean, efficient solutions without unnecessary complexity.
+Aserehe is a Python CLI tool for managing semantic versioning and conventional
+commits with a focus on simplicity.
+It provides a minimalistic codebase and straightforward installation, making it
+an ideal choice for developers who prefer clean, efficient solutions without
+unnecessary complexity.
 
 [![image](https://img.shields.io/pypi/v/aserehe.svg)](https://pypi.python.org/pypi/aserehe)
 [![image](https://img.shields.io/pypi/l/aserehe.svg)](https://pypi.python.org/pypi/aserehe)
@@ -26,7 +29,9 @@ It provides a minimalistic codebase and straightforward installation, making it 
 ### Installation
 
 `aserehe` is distributed on [PyPI](https://pypi.org/project/aserehe/).
-The recommended way to install and run `aserehe` is using `uvx` (see [uv](https://github.com/astral-sh/uv)) or `pipx` (see [pipx](https://github.com/pypa/pipx)).
+The recommended way to install and run `aserehe` is using `uvx`
+(see [uv](https://github.com/astral-sh/uv)) or
+`pipx` (see [pipx](https://github.com/pypa/pipx)).
 
 ```console
 uvx aserehe --help
@@ -40,7 +45,8 @@ pipx run aserehe --help
 
 #### Conventional Commit Check
 
-Check if commit messages in a Git repository follow the [Conventional Commits](https://www.conventionalcommits.org/) specification:
+Check if commit messages in a Git repository follow
+the [Conventional Commits](https://www.conventionalcommits.org/) specification:
 
 ```console
 aserehe check
@@ -60,7 +66,9 @@ echo "feat: add new feature" | aserehe check --from-stdin
 
 ### Semantic Versioning
 
-`aserehe` can be used to get current version and infer next [Semantic Version](https://semver.org/) based on conventional commit messages since the current version.
+`aserehe` can be used to get current version and infer next
+[Semantic Version](https://semver.org/) based on conventional commit messages
+since the current version.
 The versions are expected to be defined as Git tags.
 
 ```console
@@ -73,12 +81,14 @@ $ aserehe version --next
 
 #### Current Version
 
-The current version is determined by finding the highest semantic version tag that is an ancestor of the current `HEAD` in the Git repository.
+The current version is determined by finding the highest semantic version tag
+that is an ancestor of the current `HEAD` in the Git repository.
 If no such tag exists, the version defaults to `0.0.0`.
 
 #### Next Version
 
-The next version is inferred based on conventional commit messages since the current version.
+The next version is inferred based on conventional commit messages since
+the current version.
 The rules for version bumping are as follows:
 
 - **For versions 0.x.x (initial development)**:
@@ -91,7 +101,8 @@ The rules for version bumping are as follows:
   - Features bump the minor version.
   - Fixes bump the patch version.
 
-If there are no commits since the current version or no version-impacting changes, the next version remains the same as the current version.
+If there are no commits since the current version or no version-impacting
+changes, the next version remains the same as the current version.
 
 ## Comparison with Similar Tools
 
@@ -104,7 +115,10 @@ If there are no commits since the current version or no version-impacting change
 | [**Git Cliff**](https://github.com/orhun/git-cliff)                                               | -                 | -                 | ✓                    | -                  | -             | High - Custom templates                   | Medium     | Rust               |
 | [**Aserehe**](https://github.com/lukany/aserehe)                                                  | ✓                 | ✓                 | -                    | -                  | -             | None - Fixed rules                        | Very Low   | Python             |
 
-Among these tools, Convco is the closest to Aserehe in its philosophy of simplicity, though it offers additional features like changelog generation. For most projects, other tools are likely better default choices due to their maturity and comprehensive feature sets. If you need a full-featured release automation system, Semantic Release or Python Semantic Release provide battle-tested solutions. For changelog generation specifically, Git Cliff stands out as an excellent dedicated tool with powerful templating capabilities. However, these tools can introduce significant complexity - whether through extensive configuration options, steep learning curves, or heavy dependencies.
+Among these tools, Convco is the closest to Aserehe in its philosophy of simplicity, though it offers additional features like changelog generation.
+For most projects, other tools are likely better default choices due to their maturity and comprehensive feature sets.
+If you need a full-featured release automation system, Semantic Release or Python Semantic Release provide battle-tested solutions.
+For changelog generation specifically, Git Cliff stands out as an excellent dedicated tool with powerful templating capabilities. However, these tools can introduce significant complexity - whether through extensive configuration options, steep learning curves, or heavy dependencies.
 
 Aserehe takes a deliberately different approach. Its main advantages are:
 
