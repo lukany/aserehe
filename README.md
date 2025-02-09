@@ -107,6 +107,7 @@ changes, the next version remains the same as the current version.
 ## Comparison with Similar Tools
 
 <!-- markdownlint-disable MD013 -->
+
 | Tool                                                                                              | Commit Validation | Version Inference | Changelog Generation | Release Automation | Hooks/Plugins | Customization                             | Complexity | Implementation     |
 | ------------------------------------------------------------------------------------------------- | ----------------- | ----------------- | -------------------- | ------------------ | ------------- | ----------------------------------------- | ---------- | ------------------ |
 | [**Cocogitto**](https://github.com/cocogitto/cocogitto)                                           | ✓                 | ✓                 | ✓                    | ✓                  | ✓             | High - Custom commit types, scopes, hooks | Medium     | Rust               |
@@ -115,6 +116,7 @@ changes, the next version remains the same as the current version.
 | [**Python Semantic Release**](https://github.com/python-semantic-release/python-semantic-release) | ✓                 | ✓                 | ✓                    | ✓                  | ✓             | High - Complex configuration              | High       | Python             |
 | [**Git Cliff**](https://github.com/orhun/git-cliff)                                               | -                 | -                 | ✓                    | -                  | -             | High - Custom templates                   | Medium     | Rust               |
 | [**Aserehe**](https://github.com/lukany/aserehe)                                                  | ✓                 | ✓                 | -                    | -                  | -             | None - Fixed rules                        | Very Low   | Python             |
+
 <!-- markdownlint-enable MD013 -->
 
 Among these tools, Convco is the closest to Aserehe in its philosophy
@@ -131,15 +133,15 @@ extensive configuration options, steep learning curves, or heavy dependencies.
 Aserehe takes a deliberately different approach. Its main advantages are:
 
 - **Pure Python Implementation**: Built entirely in Python, making it easy
-to understand and extend for Python developers
+  to understand and extend for Python developers
 - **Minimal Codebase**: Focuses on reusing battle-tested Python packages rather
-than reinventing functionality
+  than reinventing functionality
 - **Minimal Configuration**: Provides sensible defaults with minimal
-configuration needed
+  configuration needed
 - **Building Block Philosophy**: Instead of prescribing a complete release
-process, it provides just the essential tools (commit validation and version
-inference) that you can integrate into your own workflows.
-It is a helper for your release process, not a complete solution.
+  process, it provides just the essential tools (commit validation and version
+  inference) that you can integrate into your own workflows.
+  It is a helper for your release process, not a complete solution.
 
 This makes Aserehe particularly suitable for Python projects where developers
 want to maintain full control over their release process while keeping
@@ -202,6 +204,7 @@ jobs:
 ```
 
 <!-- markdownlint-disable MD013 -->
+
 ```yaml
 ########################################################
 # release.yaml
@@ -273,6 +276,7 @@ jobs:
       - name: Publish
         uses: pypa/gh-action-pypi-publish@release/v1
 ```
+
 <!-- markdownlint-enable MD013 -->
 
 ## Contributing
