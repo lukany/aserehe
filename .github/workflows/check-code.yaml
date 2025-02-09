@@ -6,7 +6,7 @@ on:
     types: [checks_requested]
 
 jobs:
-  check:
+  check-python:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -49,7 +49,7 @@ jobs:
             exit 1
           fi
 
-  markdown:
+  check-markdown:
     runs-on: ubuntu-latest
 
     steps:
