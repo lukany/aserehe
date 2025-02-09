@@ -1,3 +1,6 @@
+from typing import Iterator
+
+from git.objects import Commit
 from git.repo import Repo
 from semantic_version import Version  # type: ignore[import-untyped]
 
@@ -71,7 +74,7 @@ def get_next_version(repo: Repo, tag_prefix: str, path: str | None = None) -> Ve
     bump_patch = False
     bump_minor = False
 
-    def commit_iter():
+    def commit_iter() -> Iterator[Commit]:
         if path is not None:
             return repo.iter_commits(rev=rev_range, paths=path)
         else:
