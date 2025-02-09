@@ -76,6 +76,15 @@ def version(
         "--tag-prefix",
         help="Prefix before the version in the tag name.",
     ),
+    path: str | None = typer.Option(
+        None,
+        "--path",
+        help=(
+            "If specified, only commits modifying this path are considered when"
+            " inferring the next version."
+            " Current version is always inferred from all commits."
+        ),
+    ),
 ) -> None:
     """
     Print the current or next version. A current version is printed unless --next option
@@ -89,10 +98,16 @@ def version(
     E.g. if the current version is 1.0.0 and there is a descendant conventional commit
     with a breaking change, the next version will be 2.0.0.
     """
+    if path is not None and not next:
+        typer.echo(
+            "Cannot use --path without --next option. See --help for more information.",
+            err=True,
+        )
+        raise typer.Exit(code=1)
     repo = Repo(_CURRENT_DIR)
     version_to_print = None
     if next:
-        version_to_print = get_next_version(repo, tag_prefix)
+        version_to_print = get_next_version(repo, tag_prefix, path)
     else:
         version_to_print = get_current_version(repo, tag_prefix)
     typer.echo(version_to_print)

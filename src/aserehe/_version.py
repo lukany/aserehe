@@ -38,7 +38,7 @@ def get_current_version(repo: Repo, tag_prefix: str) -> Version:
     return max(versions, default=_INITIAL_VERSION)
 
 
-def get_next_version(repo: Repo, tag_prefix: str) -> Version:
+def get_next_version(repo: Repo, tag_prefix: str, path: str | None = None) -> Version:
     """Infer the next semantic version from conventional commit messages since
     the current version.
 
@@ -70,7 +70,7 @@ def get_next_version(repo: Repo, tag_prefix: str) -> Version:
 
     bump_patch = False
     bump_minor = False
-    for commit in repo.iter_commits(rev=rev_range):
+    for commit in repo.iter_commits(rev=rev_range, paths=path or ""):
         conv_commit = ConventionalCommit.from_git_commit(commit)
 
         # Special handling for 0.x.x versions

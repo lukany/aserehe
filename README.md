@@ -81,6 +81,20 @@ $ aserehe version --next
 1.1.0
 ```
 
+You can restrict version bumping to commits modifying a specific path by using
+the `--path` option. For example:
+
+```console
+$ aserehe version --next --path src/package_a
+1.7.0
+$ aserehe version --next --path src/package_b
+2.32.5
+```
+
+Restricting version bumping to a specific path can be useful when you have
+multiple packages in the same repository and you want to version them
+independently.
+
 #### Current Version
 
 The current version is determined by finding the highest semantic version tag
