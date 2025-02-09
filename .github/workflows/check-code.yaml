@@ -67,8 +67,8 @@ jobs:
 
       - name: Lint Markdown
         run: |
-          markdownlint README.md
+          markdownlint '**/*.md'
 
       - name: Format Markdown
         run: |
-          prettier --check README.md
+          prettier --check '**/*.md'
