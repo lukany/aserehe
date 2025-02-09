@@ -6,19 +6,20 @@ from aserehe._commit import ConventionalCommit
 _INITIAL_VERSION = Version("0.0.0")
 
 
-def _parse_tag_name(tag_name: str) -> Version:
-    if not tag_name.startswith("v"):
-        raise ValueError(f"The tag name {tag_name} does not start with 'v'")
-    without_prefix = tag_name[1:]
+def _parse_tag_name(tag_name: str, tag_prefix: str) -> Version:
+    if not tag_name.startswith(tag_prefix):
+        raise ValueError(f"The tag name {tag_name} does not start with '{tag_prefix}'")
+    without_prefix = tag_name[len(tag_prefix) :]
     try:
         return Version(without_prefix)
     except ValueError as exc:
         raise ValueError(
-            f"Tag name (without 'v' prefix) is not a semantic version: {tag_name}"
+            f"Tag name (without '{tag_prefix}' prefix) is not a semantic"
+            f" version: {tag_name}"
         ) from exc
 
 
-def get_current_version(repo: Repo) -> Version:
+def get_current_version(repo: Repo, tag_prefix: str) -> Version:
     """Return the highest semantic version tag that is an ancestor of HEAD.
 
     Note that the highest semantic version tag may not be the latest tag.
@@ -30,14 +31,14 @@ def get_current_version(repo: Repo) -> Version:
     versions: list[Version] = []
     for tag in parent_tags:
         try:
-            versions.append(_parse_tag_name(tag.name))
+            versions.append(_parse_tag_name(tag.name, tag_prefix))
         except ValueError:
             pass
 
     return max(versions, default=_INITIAL_VERSION)
 
 
-def get_next_version(repo: Repo) -> Version:
+def get_next_version(repo: Repo, tag_prefix: str) -> Version:
     """Infer the next semantic version from conventional commit messages since
     the current version.
 
@@ -53,7 +54,7 @@ def get_next_version(repo: Repo) -> Version:
     If there are no commits since the current version, or no version-impacting changes,
     returns the current version.
     """
-    current_version = get_current_version(repo)
+    current_version = get_current_version(repo, tag_prefix)
 
     try:
         repo.head.commit

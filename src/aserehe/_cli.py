@@ -71,6 +71,11 @@ def version(
             help="Whether to print the next semantic version instead of the current",
         ),
     ] = False,
+    tag_prefix: str = typer.Option(
+        "v",
+        "--tag-prefix",
+        help="Prefix before the version in the tag name.",
+    ),
 ) -> None:
     """
     Print the current or next version. A current version is printed unless --next option
@@ -87,7 +92,7 @@ def version(
     repo = Repo(_CURRENT_DIR)
     version_to_print = None
     if next:
-        version_to_print = get_next_version(repo)
+        version_to_print = get_next_version(repo, tag_prefix)
     else:
-        version_to_print = get_current_version(repo)
+        version_to_print = get_current_version(repo, tag_prefix)
     typer.echo(version_to_print)
