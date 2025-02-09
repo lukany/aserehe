@@ -106,6 +106,7 @@ changes, the next version remains the same as the current version.
 
 ## Comparison with Similar Tools
 
+<!-- markdownlint-disable MD013 -->
 | Tool                                                                                              | Commit Validation | Version Inference | Changelog Generation | Release Automation | Hooks/Plugins | Customization                             | Complexity | Implementation     |
 | ------------------------------------------------------------------------------------------------- | ----------------- | ----------------- | -------------------- | ------------------ | ------------- | ----------------------------------------- | ---------- | ------------------ |
 | [**Cocogitto**](https://github.com/cocogitto/cocogitto)                                           | ✓                 | ✓                 | ✓                    | ✓                  | ✓             | High - Custom commit types, scopes, hooks | Medium     | Rust               |
@@ -114,30 +115,51 @@ changes, the next version remains the same as the current version.
 | [**Python Semantic Release**](https://github.com/python-semantic-release/python-semantic-release) | ✓                 | ✓                 | ✓                    | ✓                  | ✓             | High - Complex configuration              | High       | Python             |
 | [**Git Cliff**](https://github.com/orhun/git-cliff)                                               | -                 | -                 | ✓                    | -                  | -             | High - Custom templates                   | Medium     | Rust               |
 | [**Aserehe**](https://github.com/lukany/aserehe)                                                  | ✓                 | ✓                 | -                    | -                  | -             | None - Fixed rules                        | Very Low   | Python             |
+<!-- markdownlint-enable MD013 -->
 
-Among these tools, Convco is the closest to Aserehe in its philosophy of simplicity, though it offers additional features like changelog generation.
-For most projects, other tools are likely better default choices due to their maturity and comprehensive feature sets.
-If you need a full-featured release automation system, Semantic Release or Python Semantic Release provide battle-tested solutions.
-For changelog generation specifically, Git Cliff stands out as an excellent dedicated tool with powerful templating capabilities. However, these tools can introduce significant complexity - whether through extensive configuration options, steep learning curves, or heavy dependencies.
+Among these tools, Convco is the closest to Aserehe in its philosophy
+of simplicity, though it offers additional features like changelog generation.
+For most projects, other tools are likely better default choices due to their
+maturity and comprehensive feature sets.
+If you need a full-featured release automation system, Semantic Release
+or Python Semantic Release provide battle-tested solutions.
+For changelog generation specifically, Git Cliff stands out as an excellent
+dedicated tool with powerful templating capabilities.
+However, these tools can introduce significant complexity - whether through
+extensive configuration options, steep learning curves, or heavy dependencies.
 
 Aserehe takes a deliberately different approach. Its main advantages are:
 
-- **Pure Python Implementation**: Built entirely in Python, making it easy to understand and extend for Python developers
-- **Minimal Codebase**: Focuses on reusing battle-tested Python packages rather than reinventing functionality
-- **Minimal Configuration**: Provides sensible defaults with minimal configuration needed
-- **Building Block Philosophy**: Instead of prescribing a complete release process, it provides just the essential tools (commit validation and version inference) that you can integrate into your own workflows. It is a helper for your release process, not a complete solution.
+- **Pure Python Implementation**: Built entirely in Python, making it easy
+to understand and extend for Python developers
+- **Minimal Codebase**: Focuses on reusing battle-tested Python packages rather
+than reinventing functionality
+- **Minimal Configuration**: Provides sensible defaults with minimal
+configuration needed
+- **Building Block Philosophy**: Instead of prescribing a complete release
+process, it provides just the essential tools (commit validation and version
+inference) that you can integrate into your own workflows.
+It is a helper for your release process, not a complete solution.
 
-This makes Aserehe particularly suitable for Python projects where developers want to maintain full control over their release process while keeping the tooling simple and maintainable.
+This makes Aserehe particularly suitable for Python projects where developers
+want to maintain full control over their release process while keeping
+the tooling simple and maintainable.
 
 ## Project Goals
 
-Aserehe aims to have minimalistic codebase and straightforward installation, making it an ideal choice for developers who prefer clean, efficient solutions without unnecessary complexity.
+Aserehe aims to have a minimalistic codebase and straightforward installation,
+making it an ideal choice for developers who prefer clean, efficient solutions
+without unnecessary complexity.
 
 ## Examples
 
 ### Semantic Release using GitHub Actions
 
-The example below shows how Aserehe can be integrated into a custom release workflow. This is just one possible pattern - you can adapt it to your needs or create entirely different workflows. The key is that Aserehe provides the building blocks (commit validation and version inference) while leaving you in control of the release process.
+The example below shows how Aserehe can be integrated into a custom release workflow.
+This is just one possible pattern - you can adapt it to your needs or create
+entirely different workflows.
+The key is that Aserehe provides the building blocks (commit validation
+and version inference) while leaving you in control of the release process.
 
 ```yaml
 ########################################################
@@ -175,9 +197,11 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh workflow run release.yaml -f version=${{ steps.versions.outputs.next }}
+          gh workflow run release.yaml \
+            -f version=${{ steps.versions.outputs.next }}
 ```
 
+<!-- markdownlint-disable MD013 -->
 ```yaml
 ########################################################
 # release.yaml
@@ -249,14 +273,17 @@ jobs:
       - name: Publish
         uses: pypa/gh-action-pypi-publish@release/v1
 ```
+<!-- markdownlint-enable MD013 -->
 
 ## Contributing
 
-We welcome contributions! Please see our [contributing guidelines](CONTRIBUTING.md) for more information.
+We welcome contributions! Please see our
+[contributing guidelines](CONTRIBUTING.md) for more information.
 
 ## License
 
-This project is licensed under the terms of the MIT license. See the [LICENSE](LICENSE) file for details.
+This project is licensed under the terms of the MIT license.
+See the [LICENSE](LICENSE) file for details.
 
 ## Contact
 
