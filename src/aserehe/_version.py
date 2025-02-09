@@ -70,7 +70,6 @@ def get_next_version(repo: Repo, tag_prefix: str, path: str | None = None) -> Ve
 
     bump_patch = False
     bump_minor = False
-
     for commit in repo.iter_commits(rev=rev_range, paths=path):
         conv_commit = ConventionalCommit.from_git_commit(commit)
 
