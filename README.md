@@ -70,6 +70,8 @@ echo "feat: add new feature" | aserehe check --from-stdin
 [Semantic Version](https://semver.org/) based on conventional commit messages
 since the current version.
 The versions are expected to be defined as Git tags.
+By default, the version tags are expected to start with `v`.
+If you use a different prefix, you can specify it using the `--tag-prefix` option.
 
 ```console
 $ aserehe version
