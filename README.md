@@ -81,6 +81,12 @@ $ aserehe version --next
 1.1.0
 ```
 
+For monorepositories, you can restrict version bumping to commits modifying a specific path by using the '--path' option. For example:
+
+```console
+$ aserehe version --next --path src/package_a
+```
+
 #### Current Version
 
 The current version is determined by finding the highest semantic version tag
