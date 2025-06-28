@@ -5,6 +5,11 @@ from git.repo import Repo
 from gitdb.exc import BadName, BadObject  # type: ignore[import-untyped]
 from typing_extensions import Annotated
 
+from aserehe._changelog import (
+    format_changelog_markdown,
+    generate_changelog_for_version,
+    generate_full_changelog,
+)
 from aserehe._commit import ConventionalCommit
 from aserehe._version import get_current_version, get_next_version
 
@@ -34,6 +39,28 @@ def _validate_rev_range(repo: Repo, rev_range: str | None) -> None:
 
 
 @app.command()
+def changelog(
+    version: bool = typer.Option(False, "--version"),
+    full: bool = typer.Option(False, "--full"),
+    tag_prefix: str = typer.Option(
+        "v", "--tag-prefix", help="Prefix for version tags."
+    ),
+    path: str | None = typer.Option(
+        None, "--path", help="Path to limit changelog generation."
+    ),
+) -> None:
+    """Generate and display changelog."""
+    repo = Repo(_CURRENT_DIR)
+    if full:
+        changelog_output = generate_full_changelog(repo, tag_prefix, path)
+    else:
+        changelog_output = generate_changelog_for_version(
+            repo, tag_prefix, path=path, unreleased=not version
+        )
+        changelog_output = format_changelog_markdown(changelog_output)
+    typer.echo(changelog_output)
+
+@app.command()
 def check(
     from_stdin: bool = typer.Option(False, "--from-stdin"),
     rev_range: str | None = typer.Option(
@@ -45,6 +72,7 @@ def check(
         ),
     ),
 ) -> None:
+    """Check if commit messages follow the Conventional Commits specification."""
     if from_stdin:
         if rev_range is not None:
             typer.echo(

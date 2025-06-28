@@ -19,6 +19,18 @@ def _parse_tag_name(tag_name: str, tag_prefix: str) -> Version:
         ) from exc
 
 
+def get_version_tags(repo: Repo, tag_prefix: str) -> list:
+    """Get all valid semantic version tags from the repository."""
+    version_tags = []
+    for tag in repo.tags:
+        try:
+            _parse_tag_name(tag.name, tag_prefix)
+            version_tags.append(tag)
+        except ValueError:
+            pass
+    return version_tags
+
+
 def get_current_version(repo: Repo, tag_prefix: str) -> Version:
     """Return the highest semantic version tag that is an ancestor of HEAD.
 
