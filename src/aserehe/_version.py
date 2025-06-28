@@ -1,3 +1,4 @@
+from git.refs.tag import TagReference
 from git.repo import Repo
 from semantic_version import Version  # type: ignore[import-untyped]
 
@@ -17,6 +18,18 @@ def _parse_tag_name(tag_name: str, tag_prefix: str) -> Version:
             f"Tag name (without '{tag_prefix}' prefix) is not a semantic"
             f" version: {tag_name}"
         ) from exc
+
+
+def get_version_tags(repo: Repo, tag_prefix: str) -> list[TagReference]:
+    """Get all valid semantic version tags from the repository."""
+    version_tags = []
+    for tag in repo.tags:
+        try:
+            _parse_tag_name(tag.name, tag_prefix)
+            version_tags.append(tag)
+        except ValueError:
+            pass
+    return version_tags
 
 
 def get_current_version(repo: Repo, tag_prefix: str) -> Version:
