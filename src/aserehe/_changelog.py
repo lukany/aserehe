@@ -8,7 +8,7 @@ from datetime import datetime
 
 from git import Commit
 from git.repo import Repo
-from semantic_version import Version
+from semantic_version import Version  # type: ignore[import-untyped]
 
 from aserehe._commit import ConventionalCommit
 from aserehe._version import get_current_version, get_version_tags
@@ -32,7 +32,11 @@ class ChangelogEntry:
     ) -> ChangelogEntry:
         """Create a changelog entry from a conventional commit and git commit."""
         # Parse scope and description from commit message
-        scope, description = _parse_commit_message(git_commit.message)
+        if isinstance(git_commit.message, str):
+            message_str = git_commit.message
+        else:
+            message_str = git_commit.message.decode('utf-8')
+        scope, description = _parse_commit_message(message_str)
 
         return cls(
             commit_type=conventional_commit.type,
@@ -40,7 +44,7 @@ class ChangelogEntry:
             description=description,
             is_breaking=conventional_commit.breaking,
             commit_hash=git_commit.hexsha[:8],
-            author=git_commit.author.name,
+            author=git_commit.author.name or "Unknown",
             date=datetime.fromtimestamp(git_commit.committed_date),
         )
 
@@ -117,24 +121,73 @@ def get_commits_since_version(
 
     # If no version tags exist, get all commits
     if not version_tags:
-        commits = list(repo.iter_commits("HEAD", paths=path))
+        if path:
+            commits = list(repo.iter_commits("HEAD", paths=path))
+        else:
+            commits = list(repo.iter_commits("HEAD"))
         return commits
 
     # Find the tag for the current version
     current_tag = f"{tag_prefix}{current_version}"
     if current_tag not in [tag.name for tag in version_tags]:
         # If current version tag doesn't exist, get all commits
-        commits = list(repo.iter_commits("HEAD", paths=path))
+        if path:
+            commits = list(repo.iter_commits("HEAD", paths=path))
+        else:
+            commits = list(repo.iter_commits("HEAD"))
         return commits
 
     # Get commits since the current version tag
     try:
-        commits = list(repo.iter_commits(f"{current_tag}..HEAD", paths=path))
+        if path:
+            commits = list(repo.iter_commits(f"{current_tag}..HEAD", paths=path))
+        else:
+            commits = list(repo.iter_commits(f"{current_tag}..HEAD"))
         return commits
     except Exception:
         # Fallback to all commits if range is invalid
-        commits = list(repo.iter_commits("HEAD", paths=path))
+        if path:
+            commits = list(repo.iter_commits("HEAD", paths=path))
+        else:
+            commits = list(repo.iter_commits("HEAD"))
         return commits
+
+
+def _get_commits_for_version_range(
+    repo: Repo,
+    tag_prefix: str,
+    version: str,
+    version_tags: list[object],
+    path: str | None,
+) -> list[Commit]:
+    """Get commits for a specific version range."""
+    current_tag = f"{tag_prefix}{version}"
+
+    if current_tag not in [tag.name for tag in version_tags]:
+        return []
+
+    # Find previous version to get range
+    version_list = sorted(
+        [Version(tag.name.removeprefix(tag_prefix)) for tag in version_tags],
+        reverse=True,
+    )
+    current_version_obj = Version(version)
+
+    try:
+        current_index = version_list.index(current_version_obj)
+        if current_index + 1 < len(version_list):
+            prev_version = version_list[current_index + 1]
+            prev_tag = f"{tag_prefix}{prev_version}"
+            rev_range = f"{prev_tag}..{current_tag}"
+        else:
+            # First version, get all commits up to this tag
+            rev_range = current_tag
+
+        if path:
+            return list(repo.iter_commits(rev_range, paths=path))
+        return list(repo.iter_commits(rev_range))
+    except (ValueError, Exception):
+        return []
 
 
 def generate_changelog_for_version(
@@ -152,45 +205,22 @@ def generate_changelog_for_version(
         date = None
     else:
         if version is None:
-            version = get_current_version(repo, tag_prefix)
+            version = str(get_current_version(repo, tag_prefix))
         else:
             version = str(Version(version))  # Validate version format
 
         # Get commits for this version
         version_tags = get_version_tags(repo, tag_prefix)
-        current_tag = f"{tag_prefix}{version}"
-
-        if current_tag not in [tag.name for tag in version_tags]:
-            return VersionChangelog(version=version, date=None, entries=[])
-
-        # Find previous version to get range
-        version_list = sorted(
-            [Version(tag.name.removeprefix(tag_prefix)) for tag in version_tags],
-            reverse=True,
+        commits = _get_commits_for_version_range(
+            repo, tag_prefix, version, version_tags, path
         )
-        current_version_obj = Version(version)
-
-        try:
-            current_index = version_list.index(current_version_obj)
-            if current_index + 1 < len(version_list):
-                prev_version = version_list[current_index + 1]
-                prev_tag = f"{tag_prefix}{prev_version}"
-                commits = list(
-                    repo.iter_commits(f"{prev_tag}..{current_tag}", paths=path)
-                )
-            else:
-                # First version, get all commits up to this tag
-                commits = list(repo.iter_commits(current_tag, paths=path))
-        except (ValueError, Exception):
-            commits = []
 
         version_str = version
         # Get tag date
+        current_tag = f"{tag_prefix}{version}"
         tag_obj = next((tag for tag in version_tags if tag.name == current_tag), None)
         date = (
-            datetime.fromtimestamp(tag_obj.commit.committed_date)
-            if tag_obj
-            else None
+            datetime.fromtimestamp(tag_obj.commit.committed_date) if tag_obj else None
         )
 
     # Convert commits to changelog entries
@@ -200,8 +230,8 @@ def generate_changelog_for_version(
             conventional_commit = ConventionalCommit.from_git_commit(commit)
             entry = ChangelogEntry.from_conventional_commit(conventional_commit, commit)
             entries.append(entry)
-        except Exception:
-            # Skip non-conventional commits
+        except (ValueError, TypeError, AttributeError):  # nosec B112
+            # Skip non-conventional commits or commits with invalid data
             continue
 
     return VersionChangelog(version=version_str, date=date, entries=entries)
@@ -276,9 +306,7 @@ def generate_full_changelog(
 ) -> str:
     """Generate full changelog for all versions."""
     lines = ["# Changelog", ""]
-    lines.append(
-        "All notable changes to this project will be documented in this file."
-    )
+    lines.append("All notable changes to this project will be documented in this file.")
     lines.append("")
     lines.append(
         "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),"

@@ -54,11 +54,12 @@ def changelog(
     if full:
         changelog_output = generate_full_changelog(repo, tag_prefix, path)
     else:
-        changelog_output = generate_changelog_for_version(
+        version_changelog = generate_changelog_for_version(
             repo, tag_prefix, path=path, unreleased=not version
         )
-        changelog_output = format_changelog_markdown(changelog_output)
+        changelog_output = format_changelog_markdown(version_changelog)
     typer.echo(changelog_output)
+
 
 @app.command()
 def check(

@@ -194,7 +194,7 @@ def test_get_commits_since_version_no_tags(
     result = get_commits_since_version(mock_repo, "v", None)
 
     assert result == mock_commits
-    mock_repo.iter_commits.assert_called_once_with("HEAD", paths=None)
+    mock_repo.iter_commits.assert_called_once_with("HEAD")
 
 
 @patch("aserehe._changelog.get_current_version")
@@ -215,7 +215,7 @@ def test_get_commits_since_version_with_tags(
     result = get_commits_since_version(mock_repo, "v", None)
 
     assert result == mock_commits
-    mock_repo.iter_commits.assert_called_once_with("v1.0.0..HEAD", paths=None)
+    mock_repo.iter_commits.assert_called_once_with("v1.0.0..HEAD")
 
 
 def test_format_changelog_other_changes():
