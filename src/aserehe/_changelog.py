@@ -7,6 +7,7 @@ from dataclasses import dataclass
 from datetime import datetime
 
 from git import Commit
+from git.refs.tag import TagReference
 from git.repo import Repo
 from semantic_version import Version  # type: ignore[import-untyped]
 
@@ -157,7 +158,7 @@ def _get_commits_for_version_range(
     repo: Repo,
     tag_prefix: str,
     version: str,
-    version_tags: list[object],
+    version_tags: list[TagReference],
     path: str | None,
 ) -> list[Commit]:
     """Get commits for a specific version range."""
