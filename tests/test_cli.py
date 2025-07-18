@@ -48,15 +48,78 @@ def test_check_commits(tmp_path, monkeypatch):
     result = runner.invoke(app, ["check"])
     assert result.exit_code == 0
 
-    # Invalid commit should fail
+    # Invalid commit should fail with clean error message (not traceback)
     repo.index.commit("invalid commit message")
     result = runner.invoke(app, ["check"])
     assert result.exit_code == 1
+    assert "✗ Invalid commit summary format" in result.output
+    assert "Traceback" not in result.output  # Ensure no Python traceback
 
     result = runner.invoke(app, ["check", "--rev-range", "HEAD~3..HEAD~"])
     assert (
         result.exit_code == 0
     ), f"Expected exit code 0 but got {result.exit_code}. Output: {result.output}"
+
+
+def test_check_with_no_fail_fast(tmp_path, monkeypatch):
+    """Test --no-fail-fast option shows statistics for all commits."""
+    monkeypatch.chdir(tmp_path)
+    repo = Repo.init()
+
+    # Create a mix of valid and invalid commits
+    repo.index.commit("feat: add feature")
+    repo.index.commit("invalid commit 1")
+    repo.index.commit("fix: fix bug")
+    repo.index.commit("invalid commit 2")
+    repo.index.commit("docs: update docs")
+
+    # Test fail-fast behavior (default) - should stop at first invalid
+    result = runner.invoke(app, ["check"])
+    assert result.exit_code == 1
+    assert "✗ Invalid commit summary format" in result.output
+    assert "Commit validation summary" not in result.output
+
+    # Test no-fail-fast - should check all commits and show stats
+    result = runner.invoke(app, ["check", "--no-fail-fast"])
+    assert result.exit_code == 1
+    assert "Invalid commits found:" in result.output
+    assert "Commit validation summary:" in result.output
+    assert "Total commits: 5" in result.output
+    assert "Valid commits: 3" in result.output
+    assert "Invalid commits: 2" in result.output
+    assert "Success rate: 60.0%" in result.output
+
+    # Test no-fail-fast with all valid commits
+    result = runner.invoke(app, ["check", "--no-fail-fast", "--rev-range", "HEAD~4..HEAD~2"])
+    assert result.exit_code == 0
+    assert "Total commits: 2" in result.output
+    assert "Valid commits: 2" in result.output
+    assert "Invalid commits: 0" in result.output
+    assert "Success rate: 100.0%" in result.output
+    assert "✓ All commits are valid" in result.output
+
+
+def test_stdin_improvements(tmp_path, monkeypatch):
+    """Test improved stdin validation messages."""
+    monkeypatch.chdir(tmp_path)
+    repo = Repo.init()
+    repo.index.commit("feat: add feature")
+
+    # Test valid message from stdin
+    result = runner.invoke(app, ["check", "--from-stdin"], input="feat: add new feature")
+    assert result.exit_code == 0
+    assert "✓ Commit message is valid" in result.output
+
+    # Test invalid message from stdin  
+    result = runner.invoke(app, ["check", "--from-stdin"], input="invalid message")
+    assert result.exit_code == 1
+    assert "✗ Invalid commit summary format" in result.output
+    assert "Traceback" not in result.output
+
+    # Test conflicting options
+    result = runner.invoke(app, ["check", "--from-stdin", "--no-fail-fast"], input="feat: test")
+    assert result.exit_code == 1
+    assert "Cannot use --no-fail-fast with --from-stdin" in result.output
 
 
 def test_version(tmp_path, monkeypatch):

@@ -33,6 +33,54 @@ def _validate_rev_range(repo: Repo, rev_range: str | None) -> None:
             raise typer.Exit(code=1) from e
 
 
+def _check_commits_fail_fast(repo: Repo, rev_range: str | None) -> None:
+    """Check commits with fail-fast behavior (original behavior)."""
+    for commit in repo.iter_commits(rev_range):
+        try:
+            ConventionalCommit.from_git_commit(commit)
+        except Exception as e:
+            typer.echo(f"✗ {e}", err=True)
+            typer.echo(f"  Commit: {commit.hexsha[:8]} {commit.summary}", err=True)
+            raise typer.Exit(code=1)
+
+
+def _check_commits_with_stats(repo: Repo, rev_range: str | None) -> None:
+    """Check all commits and show statistics."""
+    commits = list(repo.iter_commits(rev_range))
+    total_commits = len(commits)
+    valid_commits = 0
+    invalid_commits = []
+    
+    for commit in commits:
+        try:
+            ConventionalCommit.from_git_commit(commit)
+            valid_commits += 1
+        except Exception as e:
+            invalid_commits.append((commit, str(e)))
+    
+    # Display results
+    if invalid_commits:
+        typer.echo("Invalid commits found:", err=True)
+        for commit, error in invalid_commits:
+            typer.echo(f"✗ {commit.hexsha[:8]} {commit.summary}", err=True)
+            typer.echo(f"  Error: {error}", err=True)
+        typer.echo()
+    
+    # Show statistics
+    invalid_count = len(invalid_commits)
+    typer.echo(f"Commit validation summary:")
+    typer.echo(f"  Total commits: {total_commits}")
+    typer.echo(f"  Valid commits: {valid_commits}")
+    typer.echo(f"  Invalid commits: {invalid_count}")
+    
+    if invalid_count > 0:
+        typer.echo(f"  Success rate: {valid_commits/total_commits*100:.1f}%")
+        raise typer.Exit(code=1)
+    else:
+        typer.echo("  Success rate: 100.0%")
+        typer.echo("✓ All commits are valid")
+
+
 @app.command()
 def check(
     from_stdin: bool = typer.Option(False, "--from-stdin"),
@@ -44,6 +92,14 @@ def check(
             " Both START and END must exist (e.g. HEAD~5..HEAD)"
         ),
     ),
+    no_fail_fast: bool = typer.Option(
+        False,
+        "--no-fail-fast",
+        help=(
+            "Continue checking all commits even when invalid commits are found."
+            " Shows statistics at the end instead of failing on first invalid commit."
+        ),
+    ),
 ) -> None:
     if from_stdin:
         if rev_range is not None:
@@ -53,13 +109,28 @@ def check(
                 err=True,
             )
             raise typer.Exit(code=1)
+        if no_fail_fast:
+            typer.echo(
+                "Cannot use --no-fail-fast with --from-stdin. "
+                "Only single commit message validation is supported.",
+                err=True,
+            )
+            raise typer.Exit(code=1)
         stdin = typer.get_text_stream("stdin")
-        ConventionalCommit.from_message(stdin.read())
+        try:
+            ConventionalCommit.from_message(stdin.read())
+            typer.echo("✓ Commit message is valid")
+        except Exception as e:
+            typer.echo(f"✗ {e}", err=True)
+            raise typer.Exit(code=1)
     else:
         repo = Repo(_CURRENT_DIR)
         _validate_rev_range(repo=repo, rev_range=rev_range)
-        for commit in repo.iter_commits(rev_range):
-            ConventionalCommit.from_git_commit(commit)
+        
+        if no_fail_fast:
+            _check_commits_with_stats(repo, rev_range)
+        else:
+            _check_commits_fail_fast(repo, rev_range)
 
 
 @app.command()
