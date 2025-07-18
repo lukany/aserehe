@@ -68,16 +68,17 @@ def _check_commits_with_stats(repo: Repo, rev_range: str | None) -> None:
     
     # Show statistics
     invalid_count = len(invalid_commits)
+    success_rate = (valid_commits / total_commits * 100) if total_commits > 0 else 100.0
+    
     typer.echo(f"Commit validation summary:")
     typer.echo(f"  Total commits: {total_commits}")
     typer.echo(f"  Valid commits: {valid_commits}")
     typer.echo(f"  Invalid commits: {invalid_count}")
+    typer.echo(f"  Success rate: {success_rate:.1f}%")
     
     if invalid_count > 0:
-        typer.echo(f"  Success rate: {valid_commits/total_commits*100:.1f}%")
         raise typer.Exit(code=1)
     else:
-        typer.echo("  Success rate: 100.0%")
         typer.echo("✓ All commits are valid")
 
 
