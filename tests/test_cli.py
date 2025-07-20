@@ -89,11 +89,11 @@ def test_check_with_no_fail_fast(tmp_path, monkeypatch):
     assert "Invalid commits: 2" in result.output
     assert "Success rate: 60.0%" in result.output
 
-    # Test no-fail-fast with all valid commits
-    result = runner.invoke(app, ["check", "--no-fail-fast", "--rev-range", "HEAD~4..HEAD~2"])
+    # Test no-fail-fast with a range that contains only valid commits
+    result = runner.invoke(app, ["check", "--no-fail-fast", "--rev-range", "HEAD~3..HEAD~2"])
     assert result.exit_code == 0
-    assert "Total commits: 2" in result.output
-    assert "Valid commits: 2" in result.output
+    assert "Total commits: 1" in result.output
+    assert "Valid commits: 1" in result.output
     assert "Invalid commits: 0" in result.output
     assert "Success rate: 100.0%" in result.output
     assert "✓ All commits are valid" in result.output
