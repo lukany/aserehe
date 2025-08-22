@@ -61,6 +61,6 @@ jobs:
           # Build package
           ########################################
           sed -i "s/^version = .*/version = \"${{ github.event.inputs.version }}\"/" pyproject.toml
-          uv build
+          uv build --quiet
       - name: Publish
         uses: pypa/gh-action-pypi-publish@release/v1
