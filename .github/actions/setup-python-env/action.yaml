@@ -14,8 +14,16 @@ runs:
     - name: Install uv
       run: pip install uv==0.8.13
       shell: bash
+    - name: Cache uv
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/uv
+        key: uv-${{ runner.os }}-${{ inputs.python-version }}-${{ hashFiles('**/uv.lock') }}
+        restore-keys: |
+          uv-${{ runner.os }}-${{ inputs.python-version }}-
+          uv-${{ runner.os }}-
     - name: Install dependencies
-      run: uv sync --locked
+      run: uv sync --locked --quiet
       shell: bash
     - name: Audit dependencies
       run: uv run pip-audit
