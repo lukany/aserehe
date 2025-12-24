@@ -95,6 +95,27 @@ Restricting version bumping to a specific path can be useful when you have
 multiple packages in the same repository and you want to version them
 independently.
 
+### Changelog Generation
+
+`aserehe` can generate changelogs based on conventional commit messages:
+
+```console
+# Generate changelog for unreleased changes
+aserehe changelog
+
+# Generate full changelog for all versions
+aserehe changelog --full
+
+# Generate changelog with custom tag prefix
+aserehe changelog --tag-prefix "release-"
+
+# Generate changelog for specific path
+aserehe changelog --path src/package_a
+```
+
+The changelog follows the [Keep a Changelog](https://keepachangelog.com/) format
+and groups commits by type (breaking changes, features, bug fixes, and other changes).
+
 #### Current Version
 
 The current version is determined by finding the highest semantic version tag
@@ -131,7 +152,7 @@ changes, the next version remains the same as the current version.
 | [**Semantic Release**](https://github.com/semantic-release/semantic-release)                      | ✓                 | ✓                 | ✓                    | ✓                  | ✓             | High - Extensive plugin system            | High       | JavaScript/Node.js |
 | [**Python Semantic Release**](https://github.com/python-semantic-release/python-semantic-release) | ✓                 | ✓                 | ✓                    | ✓                  | ✓             | High - Complex configuration              | High       | Python             |
 | [**Git Cliff**](https://github.com/orhun/git-cliff)                                               | -                 | -                 | ✓                    | -                  | -             | High - Custom templates                   | Medium     | Rust               |
-| [**Aserehe**](https://github.com/lukany/aserehe)                                                  | ✓                 | ✓                 | -                    | -                  | -             | None - Fixed rules                        | Very Low   | Python             |
+| [**Aserehe**](https://github.com/lukany/aserehe)                                                  | ✓                 | ✓                 | ✓                    | -                  | -             | None - Fixed rules                        | Very Low   | Python             |
 
 <!-- markdownlint-enable MD013 -->
 
