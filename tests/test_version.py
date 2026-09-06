@@ -82,6 +82,22 @@ class TestGetNextVersion:
         monkeypatch.chdir(temp_git_repo.working_dir)
         assert get_next_version(repo=temp_git_repo, tag_prefix="v") == _INITIAL_VERSION
 
+    def test_no_version_tag(self, temp_git_repo: Repo, monkeypatch: MonkeyPatch):
+        """All commits are considered when no commit is tagged with a version."""
+        monkeypatch.chdir(temp_git_repo.working_dir)
+        temp_git_repo.index.commit("chore: initial commit")
+        temp_git_repo.index.commit("feat: add new feature")
+        assert get_next_version(repo=temp_git_repo, tag_prefix="v") == Version("0.0.1")
+
+    def test_custom_tag_prefix(self, temp_git_repo: Repo, monkeypatch: MonkeyPatch):
+        monkeypatch.chdir(temp_git_repo.working_dir)
+        temp_git_repo.index.commit("initial commit")
+        temp_git_repo.create_tag("package-a/1.0.0")
+        temp_git_repo.index.commit("feat!: breaking change")
+        assert get_next_version(repo=temp_git_repo, tag_prefix="package-a/") == Version(
+            "2.0.0"
+        )
+
     def test_feat_commit(self, temp_git_repo: Repo, monkeypatch: MonkeyPatch):
         monkeypatch.chdir(temp_git_repo.working_dir)
         temp_git_repo.index.commit("initial commit")
