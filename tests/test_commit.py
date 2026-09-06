@@ -10,8 +10,8 @@ from aserehe._commit import (
 
 
 def test_valid_message(valid_message):
-    conv_commit = ConventionalCommit.from_message(valid_message["message"])
-    assert conv_commit == valid_message["expected"]
+    parsed = ConventionalCommit.from_message(valid_message.message)
+    assert parsed == valid_message.expected
 
 
 def test_invalid_format(invalid_format_message):

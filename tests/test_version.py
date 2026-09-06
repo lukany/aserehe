@@ -1,6 +1,5 @@
 import pytest
-from git import Repo
-from pytest import MonkeyPatch
+from git.repo import Repo
 from semantic_version import Version
 
 from aserehe._version import (
@@ -9,20 +8,6 @@ from aserehe._version import (
     get_current_version,
     get_next_version,
 )
-
-
-@pytest.fixture
-def temp_git_repo(tmp_path) -> Repo:
-    """Create a temporary git repository for testing."""
-    repo_path = tmp_path / "test_repo"
-    repo_path.mkdir()
-    repo = Repo.init(repo_path)
-    config_writer = repo.config_writer()
-    config_writer.set_value("user", "name", "test")
-    config_writer.set_value("user", "email", "test@example.com")
-    config_writer.release()
-
-    return repo
 
 
 class TestParseTagName:
@@ -49,68 +34,54 @@ class TestParseTagName:
 
 
 class TestGetCurrentVersion:
-    def test_no_tags(self, temp_git_repo: Repo, monkeypatch: MonkeyPatch):
-        monkeypatch.chdir(temp_git_repo.working_dir)
-        temp_git_repo.index.commit("initial commit")
-        assert (
-            get_current_version(repo=temp_git_repo, tag_prefix="v") == _INITIAL_VERSION
-        )
+    def test_no_tags(self, git_repo: Repo):
+        git_repo.index.commit("initial commit")
+        assert get_current_version(repo=git_repo, tag_prefix="v") == _INITIAL_VERSION
 
-    def test_single_tag(self, temp_git_repo: Repo, monkeypatch: MonkeyPatch):
-        monkeypatch.chdir(temp_git_repo.working_dir)
-        temp_git_repo.index.commit("initial commit")
-        temp_git_repo.create_tag("v1.0.0")
-        assert get_current_version(repo=temp_git_repo, tag_prefix="v") == Version(
-            "1.0.0"
-        )
+    def test_single_tag(self, git_repo: Repo):
+        git_repo.index.commit("initial commit")
+        git_repo.create_tag("v1.0.0")
+        assert get_current_version(repo=git_repo, tag_prefix="v") == Version("1.0.0")
 
-    def test_multiple_tags(self, temp_git_repo: Repo, monkeypatch: MonkeyPatch):
-        monkeypatch.chdir(temp_git_repo.working_dir)
-        temp_git_repo.index.commit("initial commit")
-        temp_git_repo.create_tag("v1.0.0")
+    def test_multiple_tags(self, git_repo: Repo):
+        git_repo.index.commit("initial commit")
+        git_repo.create_tag("v1.0.0")
 
-        temp_git_repo.index.commit("second commit")
-        temp_git_repo.create_tag("v2.0.0")
+        git_repo.index.commit("second commit")
+        git_repo.create_tag("v2.0.0")
 
-        assert get_current_version(repo=temp_git_repo, tag_prefix="v") == Version(
-            "2.0.0"
-        )
+        assert get_current_version(repo=git_repo, tag_prefix="v") == Version("2.0.0")
 
 
 class TestGetNextVersion:
-    def test_no_commits(self, temp_git_repo: Repo, monkeypatch: MonkeyPatch):
-        monkeypatch.chdir(temp_git_repo.working_dir)
-        assert get_next_version(repo=temp_git_repo, tag_prefix="v") == _INITIAL_VERSION
+    def test_no_commits(self, git_repo: Repo):
+        assert get_next_version(repo=git_repo, tag_prefix="v") == _INITIAL_VERSION
 
-    def test_no_version_tag(self, temp_git_repo: Repo, monkeypatch: MonkeyPatch):
+    def test_no_version_tag(self, git_repo: Repo):
         """All commits are considered when no commit is tagged with a version."""
-        monkeypatch.chdir(temp_git_repo.working_dir)
-        temp_git_repo.index.commit("chore: initial commit")
-        temp_git_repo.index.commit("feat: add new feature")
-        assert get_next_version(repo=temp_git_repo, tag_prefix="v") == Version("0.0.1")
+        git_repo.index.commit("chore: initial commit")
+        git_repo.index.commit("feat: add new feature")
+        assert get_next_version(repo=git_repo, tag_prefix="v") == Version("0.0.1")
 
-    def test_custom_tag_prefix(self, temp_git_repo: Repo, monkeypatch: MonkeyPatch):
-        monkeypatch.chdir(temp_git_repo.working_dir)
-        temp_git_repo.index.commit("initial commit")
-        temp_git_repo.create_tag("package-a/1.0.0")
-        temp_git_repo.index.commit("feat!: breaking change")
-        assert get_next_version(repo=temp_git_repo, tag_prefix="package-a/") == Version(
+    def test_custom_tag_prefix(self, git_repo: Repo):
+        git_repo.index.commit("initial commit")
+        git_repo.create_tag("package-a/1.0.0")
+        git_repo.index.commit("feat!: breaking change")
+        assert get_next_version(repo=git_repo, tag_prefix="package-a/") == Version(
             "2.0.0"
         )
 
-    def test_feat_commit(self, temp_git_repo: Repo, monkeypatch: MonkeyPatch):
-        monkeypatch.chdir(temp_git_repo.working_dir)
-        temp_git_repo.index.commit("initial commit")
-        temp_git_repo.create_tag("v1.0.0")
-        temp_git_repo.index.commit("feat: add new feature")
-        assert get_next_version(repo=temp_git_repo, tag_prefix="v") == Version("1.1.0")
+    def test_feat_commit(self, git_repo: Repo):
+        git_repo.index.commit("initial commit")
+        git_repo.create_tag("v1.0.0")
+        git_repo.index.commit("feat: add new feature")
+        assert get_next_version(repo=git_repo, tag_prefix="v") == Version("1.1.0")
 
-    def test_fix_commit(self, temp_git_repo: Repo, monkeypatch: MonkeyPatch):
-        monkeypatch.chdir(temp_git_repo.working_dir)
-        temp_git_repo.index.commit("initial commit")
-        temp_git_repo.create_tag("v1.0.0")
-        temp_git_repo.index.commit("fix: fix bug")
-        assert get_next_version(repo=temp_git_repo, tag_prefix="v") == Version("1.0.1")
+    def test_fix_commit(self, git_repo: Repo):
+        git_repo.index.commit("initial commit")
+        git_repo.create_tag("v1.0.0")
+        git_repo.index.commit("fix: fix bug")
+        assert get_next_version(repo=git_repo, tag_prefix="v") == Version("1.0.1")
 
     @pytest.mark.parametrize(
         "message",
@@ -138,56 +109,46 @@ class TestGetNextVersion:
             ),
         ],
     )
-    def test_breaking_change_footer(
-        self, temp_git_repo: Repo, monkeypatch: MonkeyPatch, message: str
-    ):
-        monkeypatch.chdir(temp_git_repo.working_dir)
-        temp_git_repo.index.commit("initial commit")
-        temp_git_repo.create_tag("v1.0.0")
-        temp_git_repo.index.commit(message)
-        assert get_next_version(repo=temp_git_repo, tag_prefix="v") == Version("2.0.0")
+    def test_breaking_change_footer(self, git_repo: Repo, message: str):
+        git_repo.index.commit("initial commit")
+        git_repo.create_tag("v1.0.0")
+        git_repo.index.commit(message)
+        assert get_next_version(repo=git_repo, tag_prefix="v") == Version("2.0.0")
 
-    def test_breaking_change_bang(self, temp_git_repo: Repo, monkeypatch: MonkeyPatch):
-        monkeypatch.chdir(temp_git_repo.working_dir)
-        temp_git_repo.index.commit("initial commit")
-        temp_git_repo.create_tag("v1.0.0")
-        temp_git_repo.index.commit("feat!: another breaking change")
-        assert get_next_version(repo=temp_git_repo, tag_prefix="v") == Version("2.0.0")
+    def test_breaking_change_bang(self, git_repo: Repo):
+        git_repo.index.commit("initial commit")
+        git_repo.create_tag("v1.0.0")
+        git_repo.index.commit("feat!: another breaking change")
+        assert get_next_version(repo=git_repo, tag_prefix="v") == Version("2.0.0")
 
-    def test_multiple_changes(self, temp_git_repo: Repo, monkeypatch: MonkeyPatch):
-        monkeypatch.chdir(temp_git_repo.working_dir)
-        temp_git_repo.index.commit("initial commit")
-        temp_git_repo.create_tag("v1.0.0")
-        temp_git_repo.index.commit("feat: add new feature")
-        temp_git_repo.index.commit("fix: fix bug")
-        assert get_next_version(repo=temp_git_repo, tag_prefix="v") == Version("1.1.0")
+    def test_multiple_changes(self, git_repo: Repo):
+        git_repo.index.commit("initial commit")
+        git_repo.create_tag("v1.0.0")
+        git_repo.index.commit("feat: add new feature")
+        git_repo.index.commit("fix: fix bug")
+        assert get_next_version(repo=git_repo, tag_prefix="v") == Version("1.1.0")
 
-    def test_version_from_parent_commits_only(
-        self, temp_git_repo: Repo, monkeypatch: MonkeyPatch
-    ):
-        monkeypatch.chdir(temp_git_repo.working_dir)
-
-        temp_git_repo.index.commit("initial commit")
-        temp_git_repo.create_tag("v1.0.0")
-        temp_git_repo.index.commit("feat!: breaking change")
-        temp_git_repo.create_tag("v2.0.0")
+    def test_version_from_parent_commits_only(self, git_repo: Repo):
+        git_repo.index.commit("initial commit")
+        git_repo.create_tag("v1.0.0")
+        git_repo.index.commit("feat!: breaking change")
+        git_repo.create_tag("v2.0.0")
 
         # Create a fix branch from older commit
-        v1_fix_branch = temp_git_repo.create_head("v1-fix", commit="v1.0.0")
+        v1_fix_branch = git_repo.create_head("v1-fix", commit="v1.0.0")
         v1_fix_branch.checkout()
-        temp_git_repo.index.commit("fix: fix bug")
+        git_repo.index.commit("fix: fix bug")
 
-        assert get_next_version(repo=temp_git_repo, tag_prefix="v") == Version("1.0.1")
+        assert get_next_version(repo=git_repo, tag_prefix="v") == Version("1.0.1")
 
-    def test_development_versions(self, temp_git_repo: Repo, monkeypatch: MonkeyPatch):
-        monkeypatch.chdir(temp_git_repo.working_dir)
-        temp_git_repo.index.commit("initial commit")
-        temp_git_repo.create_tag("v0.1.0")
-        temp_git_repo.index.commit("feat!: breaking change")
-        assert get_next_version(repo=temp_git_repo, tag_prefix="v") == Version("0.2.0")
-        temp_git_repo.create_tag("v0.2.0")
-        temp_git_repo.index.commit("feat: new feature")
-        assert get_next_version(repo=temp_git_repo, tag_prefix="v") == Version("0.2.1")
-        temp_git_repo.create_tag("v0.2.1")
-        temp_git_repo.index.commit("fix: bug fix")
-        assert get_next_version(repo=temp_git_repo, tag_prefix="v") == Version("0.2.2")
+    def test_development_versions(self, git_repo: Repo):
+        git_repo.index.commit("initial commit")
+        git_repo.create_tag("v0.1.0")
+        git_repo.index.commit("feat!: breaking change")
+        assert get_next_version(repo=git_repo, tag_prefix="v") == Version("0.2.0")
+        git_repo.create_tag("v0.2.0")
+        git_repo.index.commit("feat: new feature")
+        assert get_next_version(repo=git_repo, tag_prefix="v") == Version("0.2.1")
+        git_repo.create_tag("v0.2.1")
+        git_repo.index.commit("fix: bug fix")
+        assert get_next_version(repo=git_repo, tag_prefix="v") == Version("0.2.2")
