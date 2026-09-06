@@ -83,29 +83,23 @@ def get_next_version(repo: Repo, tag_prefix: str, path: str | None = None) -> Ve
         current_version, current_version_tag = current
         rev_range = f"{current_version_tag.commit.hexsha}..HEAD"
 
-    bump_patch = False
-    bump_minor = False
-    for commit in repo.iter_commits(rev=rev_range, paths=path or ""):
-        conv_commit = ConventionalCommit.from_git_commit(commit)
+    commits = [
+        ConventionalCommit.from_git_commit(commit)
+        for commit in repo.iter_commits(rev=rev_range, paths=path or "")
+    ]
+    breaking = any(commit.breaking for commit in commits)
+    feature = any(commit.type == "feat" for commit in commits)
+    fix = any(commit.type == "fix" for commit in commits)
 
-        # Special handling for 0.x.x versions
-        if current_version.major == 0:
-            if conv_commit.breaking:
-                return current_version.next_minor()
-            if conv_commit.type in ("fix", "feat"):
-                bump_patch = True
-            continue
+    if current_version.major == 0:
+        # During initial development a breaking change is not allowed to bump
+        # the major version and a feature is no more significant than a fix.
+        if breaking:
+            return current_version.next_minor()
+        return current_version.next_patch() if feature or fix else current_version
 
-        # Normal semver for 1.x.x and above
-        if conv_commit.breaking:
-            return current_version.next_major()
-        if conv_commit.type == "fix":
-            bump_patch = True
-        if conv_commit.type == "feat":
-            bump_minor = True
-
-    if bump_minor:
+    if breaking:
+        return current_version.next_major()
+    if feature:
         return current_version.next_minor()
-    if bump_patch:
-        return current_version.next_patch()
-    return current_version
+    return current_version.next_patch() if fix else current_version
