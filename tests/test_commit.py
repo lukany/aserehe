@@ -5,7 +5,7 @@ from aserehe._commit import (
     ConventionalCommit,
     InvalidCommitMessageError,
     InvalidCommitTypeError,
-    _breaking_change_footer_present,
+    _has_breaking_change_footer,
 )
 
 
@@ -46,7 +46,7 @@ Lorem ipsum dolor: this is not a footer but a paragraph in a breaking change foo
 This is still a part of the third breaking change.
 X: This is not a breaking change footer.
 """
-    assert _breaking_change_footer_present(message)
+    assert _has_breaking_change_footer(message)
 
 
 def test_git_commit_message_bytes():
