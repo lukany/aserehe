@@ -148,3 +148,25 @@ def test_version_with_path(tmp_path, monkeypatch):
     assert (
         out_none == "1.0.0"
     ), f"Expected 1.0.0 when no commits match the path, got {out_none}"
+
+
+def test_check_reports_invalid_commit(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    repo = Repo.init()
+    repo.index.commit("not conventional")
+
+    result = runner.invoke(app, ["check"])
+
+    assert result.exit_code == 1
+    # The error is reported, not raised as an unhandled traceback.
+    assert isinstance(result.exception, SystemExit)
+    assert repo.head.commit.hexsha in result.output
+    assert "Invalid commit summary format" in result.output
+
+
+def test_check_stdin_reports_invalid_message():
+    result = runner.invoke(app, ["check", "--from-stdin"], input="not conventional")
+
+    assert result.exit_code == 1
+    assert isinstance(result.exception, SystemExit)
+    assert "Invalid commit summary format" in result.output
