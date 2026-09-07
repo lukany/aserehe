@@ -36,7 +36,7 @@ format.
 3. Install dependencies via `uv sync`.
 4. Run tests via `uv run pytest`.
 5. Optionally run other code checks as defined in GitHub Workflow
-   [check-code](.github/workflows/check-code.yml).
+   [check-code](.github/workflows/check-code.yaml).
 
 ## Code of Conduct
 
